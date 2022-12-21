@@ -2,6 +2,8 @@ package com.example.sns.controller;
 
 import com.example.sns.dto.UserJoinRequestDto;
 import com.example.sns.dto.UserJoinResponseDto;
+import com.example.sns.dto.UserLoginRequestDto;
+import com.example.sns.dto.UserLoginResponseDto;
 import com.example.sns.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,12 @@ public class UserApiController {
     @PostMapping("/join")
     public RsData join(@RequestBody UserJoinRequestDto requestDto) {
         UserJoinResponseDto responseDto = userService.join(requestDto);
+        return RsData.success(responseDto);
+    }
+
+    @PostMapping("login")
+    public RsData login(@RequestBody UserLoginRequestDto requestDto) {
+        UserLoginResponseDto responseDto = userService.login(requestDto);
         return RsData.success(responseDto);
     }
 

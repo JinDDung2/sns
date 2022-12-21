@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "users")
 @Where(clause = "deleted_date IS NULL")
 @SQLDelete(sql = "UPDATE users SET deleted_date = CURRENT_TIMESTAMP where id = ?")
-public class User extends Base{
+public class User extends BaseTime{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")

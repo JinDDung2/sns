@@ -23,10 +23,10 @@ public class UserJoinRequestDto {
         this.password = password;
     }
 
-    public User toEntity(String password) {
+    public User toEntity(String encodedPassword) {
         return User.builder()
                 .userName(this.userName)
-                .password(this.password)
+                .password(encodedPassword)
                 .role(USER)
                 .build();
     }
