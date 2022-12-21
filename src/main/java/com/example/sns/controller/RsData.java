@@ -14,4 +14,12 @@ public class RsData<T> {
         this.resultCode = resultCode;
         this.result = result;
     }
+
+    public static <T> RsData<T> error (T result) {
+        return new RsData("ERROR", result);
+    }
+
+    public static <T> RsData<T> success (T result) {
+        return new RsData("SUCCESS", result);
+    }
 }

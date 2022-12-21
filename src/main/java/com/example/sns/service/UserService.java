@@ -7,6 +7,7 @@ import com.example.sns.exception.ErrorCode;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public UserJoinResponseDto join(UserJoinRequestDto requestDto) {
 
@@ -23,7 +25,8 @@ public class UserService {
             throw new SpringBootAppException(ErrorCode.DUPLICATED_USER_NAME, user.getUserName() + " 아이디가 중복입니다.");
         });
 
-        User user = requestDto.toEntity();
+        String encodePassword = passwordEncoder.encode(requestDto.getPassword());
+        User user = requestDto.toEntity(encodePassword);
         userRepository.save(user);
 
         return UserJoinResponseDto.from(user);

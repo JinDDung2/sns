@@ -19,7 +19,7 @@ public class UserApiController {
     @PostMapping("/join")
     public RsData join(@RequestBody UserJoinRequestDto requestDto) {
         UserJoinResponseDto responseDto = userService.join(requestDto);
-        return new RsData("SUCCESS", responseDto);
+        return RsData.success(responseDto);
     }
 
 }

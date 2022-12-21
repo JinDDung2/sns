@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.example.sns.entity.Role.*;
+import static com.example.sns.entity.Role.USER;
 
 
 @Getter
@@ -23,7 +23,7 @@ public class UserJoinRequestDto {
         this.password = password;
     }
 
-    public User toEntity() {
+    public User toEntity(String password) {
         return User.builder()
                 .userName(this.userName)
                 .password(this.password)
