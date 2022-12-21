@@ -87,7 +87,7 @@ class UserApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-                .andExpect(jsonPath("$.result.token").value("token"))
+                .andExpect(jsonPath("$.result.jwt").value("token"))
                 .andDo(print());
 
     }

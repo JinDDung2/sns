@@ -6,6 +6,8 @@ import com.example.sns.dto.UserLoginRequestDto;
 import com.example.sns.dto.UserLoginResponseDto;
 import com.example.sns.service.UserService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,16 +21,25 @@ public class UserApiController {
 
     private final UserService userService;
 
-    @ApiOperation(value = "회원가입", notes="성공시 결과{userId, userName}, 유저 이름 중복 - 409에러")
+    @ApiOperation(value = "회원가입")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "{userId, userName}"),
+            @ApiResponse(code = 409, message = "유저 이름이 이미 존재")
+    })
     @PostMapping("/join")
-    public RsData join(@RequestBody UserJoinRequestDto requestDto) {
+    public RsData<UserJoinResponseDto> join(@RequestBody UserJoinRequestDto requestDto) {
         UserJoinResponseDto responseDto = userService.join(requestDto);
         return RsData.success(responseDto);
     }
 
-    @ApiOperation(value = "로그인", notes="성공시 결과{token} 유저 아이디 못찾음 - 404에러, 유저 패스워드 다름 - 401에러")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "{token}"),
+            @ApiResponse(code = 404, message = "유저 이름을 찾을 수 없음"),
+            @ApiResponse(code = 401, message = "패스워드를 잘못 입력")
+    })
+    @ApiOperation(value = "로그인")
     @PostMapping("login")
-    public RsData login(@RequestBody UserLoginRequestDto requestDto) {
+    public RsData<UserLoginResponseDto> login(@RequestBody UserLoginRequestDto requestDto) {
         UserLoginResponseDto responseDto = userService.login(requestDto);
         return RsData.success(responseDto);
     }
