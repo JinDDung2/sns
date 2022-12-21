@@ -5,6 +5,10 @@ spring:
     username: root
     password:
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
