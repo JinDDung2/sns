@@ -42,7 +42,7 @@ class UserApiControllerTest {
         // given
         UserJoinRequestDto requestDto = new UserJoinRequestDto("testName", "testPwd");
         given(userService.join(any(UserJoinRequestDto.class)))
-                .willReturn(new UserJoinResponseDto(100L, requestDto.getUserName()));
+                .willReturn(new UserJoinResponseDto(100, requestDto.getUserName()));
         // when
         // then
         mockMvc.perform(post("/api/v1/users/join")
@@ -51,7 +51,7 @@ class UserApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-                .andExpect(jsonPath("$.result.userId").value(100L))
+                .andExpect(jsonPath("$.result.userId").value(100))
                 .andExpect(jsonPath("$.result.userName").value("testName"))
                 .andDo(print());
     }

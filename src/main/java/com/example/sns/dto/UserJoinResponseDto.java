@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 public class UserJoinResponseDto {
 
-    private Long userId;
+    private Integer userId;
     private String userName;
 
     @Builder
-    public UserJoinResponseDto(Long userId, String userName) {
+    public UserJoinResponseDto(Integer userId, String userName) {
         this.userId = userId;
         this.userName = userName;
     }

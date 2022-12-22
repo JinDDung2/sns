@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 public class PostCreateResponseDto {
 
-    private Long postId;
+    private Integer postId;
     private String message;
 
     @Builder
-    public PostCreateResponseDto(Long postId, String message) {
+    public PostCreateResponseDto(Integer postId, String message) {
         this.postId = postId;
         this.message = message;
     }

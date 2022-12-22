@@ -31,7 +31,6 @@ class UserServiceTest {
         User savedUser = userRepository.findByUserName("testName").get();
         // then
         assertEquals(requestDto.getUserName(), savedUser.getUserName());
-        assertEquals(requestDto.getPassword(), savedUser.getPassword());
     }
 
     @Test

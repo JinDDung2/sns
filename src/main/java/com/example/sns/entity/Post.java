@@ -19,7 +19,7 @@ public class Post extends Base{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Long id;
+    private Integer id;
 
     private String title;
     private String content;
@@ -30,7 +30,7 @@ public class Post extends Base{
     private User user;
 
     @Builder
-    public Post(Long id, String title, String content, String writer) {
+    public Post(Integer id, String title, String content, String writer) {
         this.id = id;
         this.title = title;
         this.content = content;

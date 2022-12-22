@@ -21,7 +21,7 @@ public class User extends BaseTime{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long id;
+    private Integer id;
     private String userName;
     private String password;
 
@@ -32,7 +32,7 @@ public class User extends BaseTime{
     private List<Post> posts = new ArrayList<>();
 
     @Builder
-    public User(Long id, String userName, String password, Role role) {
+    public User(Integer id, String userName, String password, Role role) {
         this.id = id;
         this.userName = userName;
         this.password = password;
