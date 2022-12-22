@@ -18,10 +18,11 @@ public class PostCreateRequestDto {
         this.content = content;
     }
 
-    public Post toEntity() {
+    public Post toEntity(String userName) {
         return Post.builder()
                 .title(this.title)
                 .content(this.content)
+                .writer(userName)
                 .build();
     }
 }
