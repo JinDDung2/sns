@@ -20,8 +20,9 @@ public class JwtTokenUtils {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
-    public Claims extractClaims(String token, String secretkey) {
-        return Jwts.parser().setSigningKey(secretkey).parseClaimsJws(token).getBody();
+
+    public Claims extractClaims(String token, String secretKey) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
     public boolean isExpired(String token, String secretKey) {
