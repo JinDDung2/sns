@@ -24,8 +24,8 @@ public class PostApiController {
             @ApiResponse(code = 200, message = "postId, message 반환")
     })
     @PostMapping("/posts")
-    public RsData<PostCreateResponseDto> createPost(@RequestBody PostCreateRequestDto requestDto, String token) {
-        PostCreateResponseDto responseDto = postService.createPost(requestDto, token);
+    public RsData<PostCreateResponseDto> createPost(@RequestBody PostCreateRequestDto requestDto) {
+        PostCreateResponseDto responseDto = postService.createPost(requestDto);
         return RsData.success(responseDto);
     }
 
