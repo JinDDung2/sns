@@ -8,34 +8,32 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
-@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@Getter
+@Table(name = "posts")
 @Where(clause = "deleted_date IS NULL")
 @SQLDelete(sql = "UPDATE users SET deleted_date = CURRENT_TIMESTAMP where id = ?")
-public class User extends BaseTime{
+public class Post extends Base{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "post_id")
     private Long id;
-    private String userName;
-    private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private String title;
+    private String content;
+    private String writer;
 
-    @OneToMany(mappedBy = "user")
-    private List<Post> posts = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Builder
-    public User(Long id, String userName, String password, Role role) {
+    public Post(Long id, String title, String content, String writer) {
         this.id = id;
-        this.userName = userName;
-        this.password = password;
-        this.role = role;
+        this.title = title;
+        this.content = content;
+        this.writer = writer;
     }
 }
