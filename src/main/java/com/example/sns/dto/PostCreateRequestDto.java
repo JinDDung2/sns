@@ -1,6 +1,7 @@
 package com.example.sns.dto;
 
 import com.example.sns.entity.Post;
+import com.example.sns.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,11 +19,11 @@ public class PostCreateRequestDto {
         this.content = content;
     }
 
-    public Post toEntity(String userName) {
+    public Post toEntity(User user) {
         return Post.builder()
                 .title(this.title)
                 .content(this.content)
-                .writer(userName)
+                .user(user)
                 .build();
     }
 }

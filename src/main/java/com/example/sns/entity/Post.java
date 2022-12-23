@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Table(name = "posts")
 @Where(clause = "deleted_date IS NULL")
-@SQLDelete(sql = "UPDATE users SET deleted_date = CURRENT_TIMESTAMP where id = ?")
+@SQLDelete(sql = "UPDATE posts SET deleted_date = CURRENT_TIMESTAMP where post_id = ?")
 public class Post extends BaseTime{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,18 +23,17 @@ public class Post extends BaseTime{
 
     private String title;
     private String content;
-    private String writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
-    public Post(Integer id, String title, String content, String writer) {
+    public Post(Integer id, String title, String content, User user) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.writer = writer;
+        this.user = user;
     }
 
     public void update(String title, String content) {

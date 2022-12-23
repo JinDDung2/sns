@@ -34,7 +34,7 @@ public class PostReadResponseDto {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .userName(post.getWriter())
+                .userName(post.getUser().getUserName())
                 .createdDate(post.getCreatedDate())
                 .modifiedDate(post.getModifiedDate())
                 .build();

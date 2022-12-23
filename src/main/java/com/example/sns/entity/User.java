@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 @Where(clause = "deleted_date IS NULL")
-@SQLDelete(sql = "UPDATE users SET deleted_date = CURRENT_TIMESTAMP where id = ?")
+@SQLDelete(sql = "UPDATE users SET deleted_date = CURRENT_TIMESTAMP where user_id = ?")
 public class User extends BaseTime{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
