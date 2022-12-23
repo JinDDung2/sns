@@ -1,8 +1,6 @@
 package com.example.sns.controller;
 
-import com.example.sns.dto.PostCreateRequestDto;
-import com.example.sns.dto.PostCreateResponseDto;
-import com.example.sns.dto.PostReadResponseDto;
+import com.example.sns.dto.*;
 import com.example.sns.service.PostService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,7 +24,7 @@ public class PostApiController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "postId, message 반환")
     })
-    @PostMapping("/posts")
+    @PostMapping("")
     public RsData<PostCreateResponseDto> createPost(@RequestBody PostCreateRequestDto requestDto, Authentication authentication) {
         PostCreateResponseDto responseDto = postService.createPost(requestDto, authentication.getName());
         return RsData.success(responseDto);
@@ -36,7 +34,6 @@ public class PostApiController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "content, pageable 반환")
     })
-
     @GetMapping("")
     public RsData<Page<PostReadResponseDto>> findAllPost(@PageableDefault(sort = "id", direction = Sort.Direction.DESC,size = 20) Pageable pageable) {
         Page<PostReadResponseDto> pages = postService.findAllByPage(pageable);
@@ -48,11 +45,25 @@ public class PostApiController {
             @ApiResponse(code = 200,
                     message = "id, title, content, userName, createdDate(yyyy-mm-dd hh:mm:ss), modifiedDate(yyyy-mm-dd hh:mm:ss)")
     })
-
     @GetMapping("/{postId}")
     public RsData<PostReadResponseDto> findById(@PathVariable Integer postId) {
         PostReadResponseDto responseDto = postService.findById(postId);
         return RsData.success(responseDto);
     }
+
+    @ApiOperation(value = "포스트 수정")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "postId, message"),
+            @ApiResponse(code = 401, message = "작성자와 수정자 불일치"),
+            @ApiResponse(code = 404, message = "해당 포스트 없음")
+    })
+    @PutMapping("/{postId}")
+    public RsData<PostUpdateResponseDto> update(@PathVariable Integer postId,
+                                                @RequestBody PostUpdateRequestDto requestDto,
+                                                Authentication authentication) {
+        PostUpdateResponseDto responseDto = postService.update(requestDto, postId, authentication.getName());
+        return RsData.success(responseDto);
+    }
+
 
 }
