@@ -65,5 +65,17 @@ public class PostApiController {
         return RsData.success(responseDto);
     }
 
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "postId, message"),
+            @ApiResponse(code = 401, message = "작성자와 삭제유저 불일치"),
+            @ApiResponse(code = 404, message = "해당 포스트 없음, 유저 존재하지 않음")
+    })
+    @DeleteMapping("/{postId}")
+    public RsData<PostDeleteResponseDto> deleteById(@PathVariable Integer postId,
+                                                Authentication authentication) {
+        PostDeleteResponseDto responseDto = postService.deleteById(postId, authentication.getName());
+        return RsData.success(responseDto);
+    }
+
 
 }

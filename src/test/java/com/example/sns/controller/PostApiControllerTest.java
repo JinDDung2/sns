@@ -1,26 +1,28 @@
 package com.example.sns.controller;
 
 import com.example.sns.dto.*;
+import com.example.sns.entity.Post;
 import com.example.sns.exception.SpringBootAppException;
+import com.example.sns.fixture.PostInfoFixture;
 import com.example.sns.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.example.sns.exception.ErrorCode.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -47,7 +49,7 @@ class PostApiControllerTest {
         given(postService.createPost(any(PostCreateRequestDto.class), any()))
                 .willReturn(new PostCreateResponseDto(100, "포스트 작성 완료"));
 
-        mockMvc.perform(post("/api/v1/posts/posts")
+        mockMvc.perform(post("/api/v1/posts")
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -66,7 +68,7 @@ class PostApiControllerTest {
         given(postService.createPost(any(PostCreateRequestDto.class), any()))
                 .willThrow(new SpringBootAppException(INVALID_TOKEN, "잘못된 토큰입니다."));
 
-        mockMvc.perform(post("/api/v1/posts/posts")
+        mockMvc.perform(post("/api/v1/posts")
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -82,7 +84,7 @@ class PostApiControllerTest {
         given(postService.createPost(any(PostCreateRequestDto.class), any()))
                 .willThrow(new SpringBootAppException(INVALID_TOKEN, "잘못된 토큰입니다."));
 
-        mockMvc.perform(post("/api/v1/posts/posts")
+        mockMvc.perform(post("/api/v1/posts")
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -92,36 +94,23 @@ class PostApiControllerTest {
 
     @Test
     @WithMockUser
-    void 포스트_리스트() throws Exception {
+    void 포스트_리스트_성공() throws Exception {
 
-        PostReadResponseDto post1 = PostReadResponseDto.builder()
-                .id(1)
-                .title("t1")
-                .content("t2")
-                .userName("w1")
-                .createdDate(LocalDateTime.now())
-                .build();
+        mockMvc.perform(get("/api/v1/posts")
+                        .param("page", "0")
+                        .param("size", "3")
+                        .param("sort", "createdAt,desc"))
+                .andExpect(status().isOk());
 
-        PostReadResponseDto post2 = PostReadResponseDto.builder()
-                .id(2)
-                .title("t2")
-                .content("t2")
-                .userName("w2")
-                .createdDate(LocalDateTime.now())
-                .build();
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
 
-        List<PostReadResponseDto> dtoList = new ArrayList<>();
-        dtoList.add(post1);
-        dtoList.add(post2);
+        verify(postService).findAllByPage(pageableCaptor.capture());
+        PageRequest pageable = (PageRequest) pageableCaptor.getValue();
 
-        given(postService.findAllByPage(any(Pageable.class)))
-                .willReturn(new PageImpl<>(dtoList));
+        assertEquals(0, pageable.getPageNumber());
+        assertEquals(3, pageable.getPageSize());
+        assertEquals(Sort.by("createdAt", "desc"), pageable.withSort(Sort.by("createdAt", "desc")).getSort());
 
-        mockMvc.perform(get("/api/v1/posts/posts")
-                        .param("pageNumber", "0")
-                        .param("size", "20")
-                        .param("sorted", "true"))
-                .andDo(print());
     }
 
     @Test
@@ -216,5 +205,62 @@ class PostApiControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andDo(print());
     }
+
+    @Test
+    @WithMockUser
+    void 포스트_삭제_성공() throws Exception {
+        Post givenPost = PostInfoFixture.get("user", "password");
+
+        given(postService.deleteById(any(), any()))
+                .willReturn(new PostDeleteResponseDto(givenPost.getId(), "포스트 삭제 완료"));
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 포스트_삭제_실패_인증_실패() throws Exception {
+        given(postService.deleteById(any(), any()))
+                .willThrow(new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다."));
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 포스트_삭제_실패_인증_작성자_불일치() throws Exception {
+
+        given(postService.deleteById(any(), any()))
+                .willThrow(new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다."));
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 포스트_삭제_실패_데이터베이스_에러() throws Exception {
+
+        given(postService.deleteById(any(), any()))
+                .willThrow(new SpringBootAppException(DATABASE_ERROR, "DB에러입니다"));
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andDo(print());
+    }
+
 
 }
