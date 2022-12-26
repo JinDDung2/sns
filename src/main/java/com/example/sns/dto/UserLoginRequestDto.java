@@ -4,11 +4,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @NoArgsConstructor
 public class UserLoginRequestDto {
 
+    @NotNull
     private String userName;
+    @NotNull
     private String password;
 
     @Builder

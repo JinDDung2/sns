@@ -8,6 +8,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,7 +22,9 @@ public class Post extends BaseTime{
     @Column(name = "post_id")
     private Integer id;
 
+    @NotNull
     private String title;
+    @NotNull
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

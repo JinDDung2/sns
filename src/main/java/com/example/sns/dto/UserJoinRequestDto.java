@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 import static com.example.sns.entity.Role.USER;
 
 
@@ -13,7 +15,9 @@ import static com.example.sns.entity.Role.USER;
 @NoArgsConstructor
 public class UserJoinRequestDto {
 
+    @NotNull
     private String userName;
+    @NotNull
     private String password;
     private Role role;
 
