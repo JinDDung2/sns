@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -61,7 +62,7 @@ class PostApiControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithAnonymousUser
     void 포스트_작성_실패_토큰_없음() throws Exception {
         PostCreateRequestDto requestDto = new PostCreateRequestDto("testTitle", "testContent");
 
@@ -77,7 +78,7 @@ class PostApiControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithAnonymousUser
     void 포스트_작성_실패_토큰_만료() throws Exception {
         PostCreateRequestDto requestDto = new PostCreateRequestDto("testTitle", "testContent");
 
@@ -159,7 +160,7 @@ class PostApiControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithAnonymousUser
     void 포스트_수정_실패_인증_실패() throws Exception {
         PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
 
@@ -175,7 +176,7 @@ class PostApiControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithAnonymousUser
     void 포스트_수정_실패_작성자_불일치() throws Exception {
         PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
 
