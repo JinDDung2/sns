@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.sns.entity.Role.ADMIN;
 import static com.example.sns.exception.ErrorCode.*;
 
 @Service
@@ -59,7 +60,7 @@ public class PostService {
             throw new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다.");
         });
 
-        if (!post.getUser().getUserName().equals(userName)) {
+        if (!(post.getUser().getUserName().equals(userName) || !post.getUser().getRole().equals(ADMIN))) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
@@ -78,7 +79,7 @@ public class PostService {
             throw new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다.");
         });
 
-        if (!post.getUser().getUserName().equals(userName)) {
+        if (!(post.getUser().getUserName().equals(userName) || !post.getUser().getRole().equals(ADMIN))) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
