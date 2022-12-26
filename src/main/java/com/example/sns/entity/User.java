@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.sns.entity.Role.*;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,5 +42,15 @@ public class User extends BaseTime{
         this.userName = userName;
         this.password = password;
         this.role = role;
+    }
+
+    public User upgradeAdmin(User user) {
+        user.role = ADMIN;
+        return user;
+    }
+
+    public User downgradeUser(User user) {
+        user.role = USER;
+        return user;
     }
 }

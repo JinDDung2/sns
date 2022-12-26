@@ -1,9 +1,6 @@
 package com.example.sns.service;
 
-import com.example.sns.dto.UserJoinRequestDto;
-import com.example.sns.dto.UserJoinResponseDto;
-import com.example.sns.dto.UserLoginRequestDto;
-import com.example.sns.dto.UserLoginResponseDto;
+import com.example.sns.dto.*;
 import com.example.sns.entity.User;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.jwt.JwtTokenUtils;
@@ -15,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.sns.entity.Role.*;
 import static com.example.sns.exception.ErrorCode.*;
 
 @Service
@@ -57,5 +55,22 @@ public class UserService {
 
         String token = jwtTokenUtils.createToken(requestDto.getUserName(), secretKey, expiredTimeMs);
         return new UserLoginResponseDto(token);
+    }
+
+    @Transactional
+    public UserRoleResponseDto upgradeRole(Integer changeId, String userName) {
+        User admin = userRepository.findByUserName(userName).orElseThrow(() -> {
+            throw new SpringBootAppException(USERNAME_NOT_FOUND, "admin 유저가 존재하지 않습니다.");
+        });
+
+        User changeUser = userRepository.findById(changeId).orElseThrow(() -> {
+            throw new SpringBootAppException(USERNAME_NOT_FOUND, "유저가 존재하지 않습니다.");
+        });
+
+        if (admin.getRole() == ADMIN || changeUser.getRole() == USER) {
+            changeUser.upgradeAdmin(changeUser);
+        }
+
+        return UserRoleResponseDto.from(changeUser);
     }
 }

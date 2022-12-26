@@ -1,18 +1,13 @@
 package com.example.sns.controller;
 
-import com.example.sns.dto.UserJoinRequestDto;
-import com.example.sns.dto.UserJoinResponseDto;
-import com.example.sns.dto.UserLoginRequestDto;
-import com.example.sns.dto.UserLoginResponseDto;
+import com.example.sns.dto.*;
 import com.example.sns.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,9 +33,20 @@ public class UserApiController {
             @ApiResponse(code = 401, message = "패스워드를 잘못 입력")
     })
     @ApiOperation(value = "로그인")
-    @PostMapping("login")
+    @PostMapping("/login")
     public RsData<UserLoginResponseDto> login(@RequestBody UserLoginRequestDto requestDto) {
         UserLoginResponseDto responseDto = userService.login(requestDto);
+        return RsData.success(responseDto);
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "role"),
+            @ApiResponse(code = 404, message = "유저 이름을 찾을 수 없음"),
+    })
+    @ApiOperation(value = "역할 변경")
+    @PostMapping("{userId}/role/change")
+    public RsData<UserRoleResponseDto> changeRole(@PathVariable Integer userId, Authentication authentication) {
+        UserRoleResponseDto responseDto = userService.upgradeRole(userId, authentication.getName());
         return RsData.success(responseDto);
     }
 
