@@ -60,7 +60,7 @@ public class PostService {
             throw new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다.");
         });
 
-        if (!(post.getUser().getUserName().equals(userName) || !post.getUser().getRole().equals(ADMIN))) {
+        if (!post.getUser().getUserName().equals(userName) && post.getUser().getRole() != ADMIN) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
@@ -79,7 +79,7 @@ public class PostService {
             throw new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다.");
         });
 
-        if (!(post.getUser().getUserName().equals(userName) || !post.getUser().getRole().equals(ADMIN))) {
+        if (!post.getUser().getUserName().equals(userName) && post.getUser().getRole() != ADMIN) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
