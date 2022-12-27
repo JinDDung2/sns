@@ -46,7 +46,7 @@ public class UserApiController {
     @ApiOperation(value = "역할 변경")
     @PostMapping("{userId}/role/change")
     public RsData<UserRoleResponseDto> changeRole(@PathVariable Integer userId, Authentication authentication) {
-        UserRoleResponseDto responseDto = userService.upgradeRole(userId, authentication.getName());
+        UserRoleResponseDto responseDto = userService.changeRole(userId, authentication.getName());
         return RsData.success(responseDto);
     }
 

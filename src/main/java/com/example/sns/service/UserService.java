@@ -58,7 +58,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserRoleResponseDto upgradeRole(Integer changeId, String userName) {
+    public UserRoleResponseDto changeRole(Integer changeId, String userName) {
         User admin = userRepository.findByUserName(userName).orElseThrow(() -> {
             throw new SpringBootAppException(USERNAME_NOT_FOUND, "admin 유저가 존재하지 않습니다.");
         });
@@ -71,6 +71,10 @@ public class UserService {
             changeUser.upgradeAdmin(changeUser);
         }
 
-        return UserRoleResponseDto.from(changeUser);
-    }
+        if (admin.getRole() == ADMIN || changeUser.getRole() == ADMIN) {
+            changeUser.downgradeUser(changeUser);
+        }
+
+            return UserRoleResponseDto.from(changeUser);
+        }
 }
