@@ -24,14 +24,10 @@ public class PostService {
     private final UserRepository userRepository;
 
     public PostCreateResponseDto createPost(PostCreateRequestDto requestDto, String userName) {
-
-        User user = userRepository.findByUserName(userName).orElseThrow(() -> {
-            throw new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다.");
-        });
-
+        User user = findUser(userName);
         Post post = requestDto.toEntity(user);
-        postRepository.save(post);
 
+        postRepository.save(post);
         return PostCreateResponseDto.from(post);
     }
 
@@ -43,41 +39,25 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostReadResponseDto findById(Integer postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> {
-            throw new SpringBootAppException(POST_NOT_FOUND, postId + " 해당 포스트가 없습니다.");
-        });
-
+        Post post = findPost(postId);
         return PostReadResponseDto.from(post);
     }
 
     public PostUpdateResponseDto update(PostUpdateRequestDto requestDto, Integer postId, String userName) {
-
-        Post post = postRepository.findById(postId).orElseThrow(() -> {
-            throw new SpringBootAppException(POST_NOT_FOUND, postId + " 해당 포스트가 없습니다.");
-        });
-
-        userRepository.findByUserName(userName).orElseThrow(() -> {
-            throw new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다.");
-        });
+        Post post = findPost(postId);
+        findUser(userName);
 
         if (!post.getUser().getUserName().equals(userName) && post.getUser().getRole() != ADMIN) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
         post.update(requestDto.getTitle(), requestDto.getBody());
-
         return PostUpdateResponseDto.from(post);
     }
 
     public PostDeleteResponseDto deleteById(Integer postId, String userName) {
-
-        Post post = postRepository.findById(postId).orElseThrow(() -> {
-            throw new SpringBootAppException(POST_NOT_FOUND, postId + " 해당 포스트가 없습니다.");
-        });
-
-        userRepository.findByUserName(userName).orElseThrow(() -> {
-            throw new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다.");
-        });
+        Post post = findPost(postId);
+        findUser(userName);
 
         if (!post.getUser().getUserName().equals(userName) && post.getUser().getRole() != ADMIN) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
@@ -85,5 +65,17 @@ public class PostService {
 
         postRepository.deleteById(postId);
         return PostDeleteResponseDto.from(post);
+    }
+
+    private Post findPost(Integer postId) {
+        return postRepository.findById(postId).orElseThrow(() -> {
+            throw new SpringBootAppException(POST_NOT_FOUND, postId + " 해당 포스트가 없습니다.");
+        });
+    }
+
+    private User findUser(String userName) {
+        return userRepository.findByUserName(userName).orElseThrow(() -> {
+            throw new SpringBootAppException(USERNAME_NOT_FOUND, "UserName을 찾을 수 없습니다.");
+        });
     }
 }
