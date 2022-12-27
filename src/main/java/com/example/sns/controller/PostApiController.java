@@ -32,7 +32,7 @@ public class PostApiController {
 
     @ApiOperation(value = "최신 순으로 20개씩 표시 (Pageable 사용)")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "content, pageable 반환")
+            @ApiResponse(code = 200, message = "body, pageable 반환")
     })
     @GetMapping("")
     public RsData<Page<PostReadResponseDto>> findAllPost(@PageableDefault(sort = "id", direction = Sort.Direction.DESC,size = 20) Pageable pageable) {
@@ -43,7 +43,7 @@ public class PostApiController {
     @ApiOperation(value = "포스트 단건 조회")
     @ApiResponses({
             @ApiResponse(code = 200,
-                    message = "id, title, content, userName, createdDate(yyyy-mm-dd hh:mm:ss), modifiedDate(yyyy-mm-dd hh:mm:ss)")
+                    message = "id, title, body, userName, createdDate(yyyy-mm-dd hh:mm:ss), modifiedDate(yyyy-mm-dd hh:mm:ss)")
     })
     @GetMapping("/{postId}")
     public RsData<PostReadResponseDto> findById(@PathVariable Integer postId) {
@@ -65,6 +65,7 @@ public class PostApiController {
         return RsData.success(responseDto);
     }
 
+    @ApiOperation(value = "포스트 삭제")
     @ApiResponses({
             @ApiResponse(code = 200, message = "postId, message"),
             @ApiResponse(code = 401, message = "작성자와 삭제유저 불일치"),

@@ -8,7 +8,7 @@ public class PostInfoFixture {
         return Post.builder()
                 .id(1)
                 .title("title")
-                .content("content")
+                .body("body")
                 .user(UserInfoFixture.get(userName, password))
                 .build();
     }

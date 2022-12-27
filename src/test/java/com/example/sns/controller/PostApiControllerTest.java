@@ -45,7 +45,7 @@ class PostApiControllerTest {
     @Test
     @WithMockUser
     void 포스트_작성_성공() throws Exception {
-        PostCreateRequestDto requestDto = new PostCreateRequestDto("testTitle", "testContent");
+        PostCreateRequestDto requestDto = new PostCreateRequestDto("testTitle", "testbody");
 
         given(postService.createPost(any(PostCreateRequestDto.class), any()))
                 .willReturn(new PostCreateResponseDto(100, "포스트 작성 완료"));
@@ -64,7 +64,7 @@ class PostApiControllerTest {
     @Test
     @WithAnonymousUser
     void 포스트_작성_실패_토큰_없음() throws Exception {
-        PostCreateRequestDto requestDto = new PostCreateRequestDto("testTitle", "testContent");
+        PostCreateRequestDto requestDto = new PostCreateRequestDto("testTitle", "testbody");
 
         given(postService.createPost(any(PostCreateRequestDto.class), any()))
                 .willThrow(new SpringBootAppException(INVALID_TOKEN, "잘못된 토큰입니다."));
@@ -80,7 +80,7 @@ class PostApiControllerTest {
     @Test
     @WithAnonymousUser
     void 포스트_작성_실패_토큰_만료() throws Exception {
-        PostCreateRequestDto requestDto = new PostCreateRequestDto("testTitle", "testContent");
+        PostCreateRequestDto requestDto = new PostCreateRequestDto("testTitle", "testbody");
 
         given(postService.createPost(any(PostCreateRequestDto.class), any()))
                 .willThrow(new SpringBootAppException(INVALID_TOKEN, "잘못된 토큰입니다."));
@@ -121,7 +121,7 @@ class PostApiControllerTest {
         PostReadResponseDto responseDto = PostReadResponseDto.builder()
                 .id(1)
                 .title("testTitle")
-                .content("testContent")
+                .body("testbody")
                 .userName("testUser")
                 .build();
 
@@ -135,7 +135,7 @@ class PostApiControllerTest {
                 .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
                 .andExpect(jsonPath("$.result.id").value(1))
                 .andExpect(jsonPath("$.result.title").value("testTitle"))
-                .andExpect(jsonPath("$.result.content").value("testContent"))
+                .andExpect(jsonPath("$.result.body").value("testbody"))
                 .andExpect(jsonPath("$.result.userName").value("testUser"))
                 .andDo(print());
     }
@@ -143,7 +143,7 @@ class PostApiControllerTest {
     @Test
     @WithMockUser
     void 포스트_수정_성공() throws Exception {
-        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
+        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updatebody");
 
         given(postService.update(any(PostUpdateRequestDto.class), any(), any()))
                 .willReturn(new PostUpdateResponseDto(100, "포스트 수정 완료"));
@@ -162,7 +162,7 @@ class PostApiControllerTest {
     @Test
     @WithAnonymousUser
     void 포스트_수정_실패_인증_실패() throws Exception {
-        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
+        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updatebody");
 
         given(postService.update(any(PostUpdateRequestDto.class), any(), any()))
                 .willThrow(new SpringBootAppException(INVALID_TOKEN, "잘못된 토큰입니다."));
@@ -178,7 +178,7 @@ class PostApiControllerTest {
     @Test
     @WithAnonymousUser
     void 포스트_수정_실패_작성자_불일치() throws Exception {
-        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
+        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updatebody");
 
         given(postService.update(any(PostUpdateRequestDto.class), any(), any()))
                 .willThrow(new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다."));
@@ -194,7 +194,7 @@ class PostApiControllerTest {
     @Test
     @WithMockUser
     void 포스트_작성_실패_데이터베이스() throws Exception {
-        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
+        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updatebody");
 
         given(postService.update(any(PostUpdateRequestDto.class), any(), any()))
                 .willThrow(new SpringBootAppException(DATABASE_ERROR, "DB에러입니다."));

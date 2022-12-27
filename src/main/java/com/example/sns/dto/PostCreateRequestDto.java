@@ -15,18 +15,18 @@ public class PostCreateRequestDto {
     @NotNull
     private String title;
     @NotNull
-    private String content;
+    private String body;
 
     @Builder
-    public PostCreateRequestDto(String title, String content) {
+    public PostCreateRequestDto(String title, String body) {
         this.title = title;
-        this.content = content;
+        this.body = body;
     }
 
     public Post toEntity(User user) {
         return Post.builder()
                 .title(this.title)
-                .content(this.content)
+                .body(this.body)
                 .user(user)
                 .build();
     }

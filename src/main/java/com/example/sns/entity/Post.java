@@ -25,22 +25,22 @@ public class Post extends BaseTime{
     @NotNull
     private String title;
     @NotNull
-    private String content;
+    private String body;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
-    public Post(Integer id, String title, String content, User user) {
+    public Post(Integer id, String title, String body, User user) {
         this.id = id;
         this.title = title;
-        this.content = content;
+        this.body = body;
         this.user = user;
     }
 
-    public void update(String title, String content) {
+    public void update(String title, String body) {
         this.title = title;
-        this.content = content;
+        this.body = body;
     }
 }

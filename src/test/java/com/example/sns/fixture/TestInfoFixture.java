@@ -11,7 +11,7 @@ public class TestInfoFixture {
         info.setUserName("user");
         info.setPassword("password");
         info.setTitle("title");
-        info.setContent("content");
+        info.setBody("body");
         return info;
     }
 
@@ -23,7 +23,7 @@ public class TestInfoFixture {
         private String userName;
         private String password;
         private String title;
-        private String content;
+        private String body;
     }
 
 }

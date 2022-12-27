@@ -46,7 +46,7 @@ class PostServiceTest {
 
         Post givenPost = mock(Post.class);
         User givenUser = mock(User.class);
-        PostCreateRequestDto requestDto = new PostCreateRequestDto("title", "content");
+        PostCreateRequestDto requestDto = new PostCreateRequestDto("title", "body");
 
         when(userRepository.findByUserName(fixture.getUserName()))
                 .thenReturn(Optional.of(givenUser));
@@ -60,7 +60,7 @@ class PostServiceTest {
     void 등록_실패_유저_없음() throws Exception {
         TestInfoFixture.TestInfo fixture = TestInfoFixture.get();
         Post givenPost = mock(Post.class);
-        PostCreateRequestDto requestDto = new PostCreateRequestDto("title", "content");
+        PostCreateRequestDto requestDto = new PostCreateRequestDto("title", "body");
 
         when(userRepository.findByUserName(fixture.getUserName()))
                 .thenReturn(Optional.empty());
@@ -81,7 +81,7 @@ class PostServiceTest {
         Post givenPost = Post.builder()
                 .id(1)
                 .title("testTitle")
-                .content("testContent")
+                .body("testbody")
                 .user(givenUser)
                 .build();
 
@@ -92,7 +92,7 @@ class PostServiceTest {
 
         assertEquals(responseDto.getId(), givenPost.getId());
         assertEquals(responseDto.getTitle(), givenPost.getTitle());
-        assertEquals(responseDto.getContent(), givenPost.getContent());
+        assertEquals(responseDto.getBody(), givenPost.getBody());
         assertEquals(responseDto.getUserName(), givenPost.getUser().getUserName());
     }
 
@@ -110,7 +110,7 @@ class PostServiceTest {
         Post givenPost = Post.builder()
                 .id(1)
                 .title("title1")
-                .content("content1")
+                .body("body1")
                 .user(givenUser)
                 .build();
 
@@ -133,7 +133,7 @@ class PostServiceTest {
         Post givenPost = Post.builder()
                 .id(1)
                 .title("t")
-                .content("c")
+                .body("c")
                 .user(givenUser)
                 .build();
 
@@ -141,7 +141,7 @@ class PostServiceTest {
         when(userRepository.findByUserName(givenPost.getUser().getUserName())).thenReturn(Optional.empty());
 
 
-        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
+        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updatebody");
 
         SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
             postService.update(requestDto, 100, givenPost.getUser().getUserName());
@@ -158,7 +158,7 @@ class PostServiceTest {
         User givenUser2 = UserInfoFixture.get("user2", "password2");
         Post givenPost = PostInfoFixture.get(givenUser1.getUserName(), givenUser1.getPassword());
 
-        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
+        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updatebody");
 
         when(userRepository.findByUserName(givenUser2.getUserName())).thenReturn(Optional.of(givenUser2));
         when(postRepository.findById(givenPost.getId())).thenReturn(Optional.of(givenPost));
@@ -173,7 +173,7 @@ class PostServiceTest {
     void 수정_실패_작성자_없음() throws Exception {
         TestInfoFixture.TestInfo fixture = TestInfoFixture.get();
 
-        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updateContent");
+        PostUpdateRequestDto requestDto = new PostUpdateRequestDto("updateTitle", "updatebody");
 
         when(postRepository.findById(fixture.getPostId())).thenReturn(Optional.of(mock(Post.class)));
         when(userRepository.findByUserName(fixture.getUserName())).thenReturn(Optional.empty());

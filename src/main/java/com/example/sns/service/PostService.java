@@ -64,7 +64,7 @@ public class PostService {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
-        post.update(requestDto.getTitle(), requestDto.getContent());
+        post.update(requestDto.getTitle(), requestDto.getBody());
 
         return PostUpdateResponseDto.from(post);
     }

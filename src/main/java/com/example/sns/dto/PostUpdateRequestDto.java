@@ -12,12 +12,12 @@ public class PostUpdateRequestDto {
     @NotNull
     private String title;
     @NotNull
-    private String content;
+    private String body;
 
     @Builder
-    public PostUpdateRequestDto(String title, String content) {
+    public PostUpdateRequestDto(String title, String body) {
         this.title = title;
-        this.content = content;
+        this.body = body;
     }
 
 }
