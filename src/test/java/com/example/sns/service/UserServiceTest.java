@@ -5,6 +5,7 @@ import com.example.sns.dto.UserJoinResponseDto;
 import com.example.sns.dto.UserLoginRequestDto;
 import com.example.sns.dto.UserLoginResponseDto;
 import com.example.sns.entity.User;
+import com.example.sns.exception.ErrorCode;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.jwt.JwtTokenUtils;
 import com.example.sns.repository.UserRepository;
@@ -73,10 +74,11 @@ class UserServiceTest {
 
         when(userRepository.existsByUserName(requestDto.getUserName())).thenReturn(true);
 
-        assertThrows(SpringBootAppException.class, () -> {
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
             userService.join(requestDto);
         });
 
+        assertEquals(springBootAppException.getErrorCode(), ErrorCode.DUPLICATED_USER_NAME);
     }
 
     @Test
@@ -93,9 +95,12 @@ class UserServiceTest {
     @Test
     void 로그인_실패_아이디_못찾음() {
         when(userRepository.findByUserName(user.getUserName())).thenReturn(Optional.empty());
-        assertThrows(SpringBootAppException.class, () -> {
+
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
             userService.login(loginRequest);
         });
+
+        assertEquals(springBootAppException.getErrorCode(), ErrorCode.USERNAME_NOT_FOUND);
     }
 
     @Test
@@ -103,10 +108,11 @@ class UserServiceTest {
         when(userRepository.findByUserName(user.getUserName())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(false);
 
-        assertThrows(SpringBootAppException.class, () -> {
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
             userService.login(loginRequest);
         });
 
+        assertEquals(springBootAppException.getErrorCode(), ErrorCode.INVALID_PASSWORD);
     }
 
     @Test
