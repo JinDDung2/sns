@@ -31,9 +31,9 @@ public class UserService {
     @Transactional
     public UserJoinResponseDto join(UserJoinRequestDto requestDto) {
 
-        userRepository.findByUserName(requestDto.getUserName()).ifPresent(user -> {
-            throw new SpringBootAppException(DUPLICATED_USER_NAME, user.getUserName() + " 아이디가 중복입니다.");
-        });
+        if (userRepository.existsByUserName(requestDto.getUserName())) {
+            throw new SpringBootAppException(DUPLICATED_USER_NAME, requestDto.getUserName() + "이 중복됩니다");
+        }
 
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
         User user = requestDto.toEntity(encodedPassword);
