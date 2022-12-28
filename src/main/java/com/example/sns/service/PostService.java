@@ -1,8 +1,8 @@
 package com.example.sns.service;
 
-import com.example.sns.dto.*;
 import com.example.sns.entity.Post;
 import com.example.sns.entity.User;
+import com.example.sns.entity.dto.*;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
@@ -23,6 +23,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
+    /**
+     * 비지니스로직
+     */
     public PostCreateResponseDto createPost(PostCreateRequestDto requestDto, String userName) {
         User user = findUser(userName);
         Post post = requestDto.toEntity(user);
@@ -67,6 +70,9 @@ public class PostService {
         return PostDeleteResponseDto.from(post);
     }
 
+    /**
+     * 중복메서드 정리
+     */
     private Post findPost(Integer postId) {
         return postRepository.findById(postId).orElseThrow(() -> {
             throw new SpringBootAppException(POST_NOT_FOUND, postId + " 해당 포스트가 없습니다.");

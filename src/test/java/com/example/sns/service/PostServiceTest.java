@@ -1,9 +1,9 @@
 package com.example.sns.service;
 
-import com.example.sns.dto.PostCreateRequestDto;
-import com.example.sns.dto.PostCreateResponseDto;
-import com.example.sns.dto.PostReadResponseDto;
-import com.example.sns.dto.PostUpdateRequestDto;
+import com.example.sns.entity.dto.PostCreateRequestDto;
+import com.example.sns.entity.dto.PostCreateResponseDto;
+import com.example.sns.entity.dto.PostReadResponseDto;
+import com.example.sns.entity.dto.PostUpdateRequestDto;
 import com.example.sns.entity.Post;
 import com.example.sns.entity.User;
 import com.example.sns.exception.SpringBootAppException;

@@ -1,7 +1,7 @@
 package com.example.sns.controller;
 
-import com.example.sns.dto.*;
 import com.example.sns.entity.Post;
+import com.example.sns.entity.dto.*;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.fixture.PostInfoFixture;
 import com.example.sns.service.PostService;

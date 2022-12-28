@@ -1,6 +1,6 @@
 package com.example.sns.controller;
 
-import com.example.sns.dto.*;
+import com.example.sns.entity.dto.*;
 import com.example.sns.service.PostService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -73,7 +73,7 @@ public class PostApiController {
     })
     @DeleteMapping("/{postId}")
     public RsData<PostDeleteResponseDto> deleteById(@PathVariable Integer postId,
-                                                Authentication authentication) {
+                                                    Authentication authentication) {
         PostDeleteResponseDto responseDto = postService.deleteById(postId, authentication.getName());
         return RsData.success(responseDto);
     }
