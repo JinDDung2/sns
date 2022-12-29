@@ -1,14 +1,23 @@
 package com.example.sns.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.sns.service.HelloService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1")
 public class HelloController {
 
-    @GetMapping("/api/v1/hello")
+    private final HelloService helloService;
+
+    @GetMapping("/hello")
     public String hello() {
         return "허진혁";
     }
 
+    @GetMapping("{num}")
+    public String sumOfDigit(@PathVariable String num) {
+        return helloService.sumOfDigit(num);
+    }
 }
