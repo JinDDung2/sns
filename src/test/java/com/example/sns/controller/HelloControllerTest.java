@@ -28,7 +28,7 @@ class HelloControllerTest {
     @Test
     @WithMockUser
     void 각_자리수_합() throws Exception {
-        given(helloService.sumOfDigit(any(String.class))).willReturn("6");
+        given(helloService.sumOfDigit(any(Integer.class))).willReturn(6);
 
         mockMvc.perform(get("/api/v1/123")
                         .with(csrf())

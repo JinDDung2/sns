@@ -13,9 +13,9 @@ class HelloServiceTest {
     @Test
     void 각_자릿수_합() {
 
-        when(helloService.sumOfDigit("123")).thenReturn("6");
+        when(helloService.sumOfDigit(123)).thenReturn(6);
 
-        assertEquals(helloService.sumOfDigit("123"), "6");
+        assertEquals(helloService.sumOfDigit(123), 6);
     }
 
 }

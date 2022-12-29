@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class HelloService {
 
-    public String sumOfDigit(String num) {
+    public Integer sumOfDigit(int num) {
         int result = 0;
         int n = Integer.valueOf(num);
 
@@ -13,7 +13,7 @@ public class HelloService {
             result += n % 10;
             n /= 10;
         }
-        return String.valueOf(result);
+        return result;
     }
 
 }
