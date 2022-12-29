@@ -17,7 +17,7 @@ public class HelloController {
     }
 
     @GetMapping("{num}")
-    public String sumOfDigit(@PathVariable int num) {
+    public int sumOfDigit(@PathVariable int num) {
         return helloService.sumOfDigit(num);
     }
 }
