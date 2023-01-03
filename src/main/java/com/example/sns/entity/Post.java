@@ -9,6 +9,8 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,12 +33,16 @@ public class Post extends BaseTime{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
+
     @Builder
-    public Post(Integer id, String title, String body, User user) {
+    public Post(Integer id, String title, String body, User user, List<Comment> comments) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.user = user;
+        this.comments = comments;
     }
 
     public void update(String title, String body) {

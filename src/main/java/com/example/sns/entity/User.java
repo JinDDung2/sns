@@ -36,12 +36,17 @@ public class User extends BaseTime{
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "commentUser")
+    private List<Comment> comments = new ArrayList<>();
+
     @Builder
-    public User(Integer id, String userName, String password, Role role) {
+    public User(Integer id, String userName, String password, Role role, List<Post> posts, List<Comment> comments) {
         this.id = id;
         this.userName = userName;
         this.password = password;
         this.role = role;
+        this.posts = posts;
+        this.comments = comments;
     }
 
     public User upgradeAdmin(User user) {
