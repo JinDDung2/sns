@@ -4,6 +4,7 @@ import com.example.sns.entity.Comment;
 import com.example.sns.entity.Post;
 import com.example.sns.entity.User;
 import com.example.sns.entity.dto.CommentCreateRequestDto;
+import com.example.sns.entity.dto.CommentUpdateRequestDto;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.fixture.CommentFixture;
 import com.example.sns.fixture.PostInfoFixture;
@@ -17,8 +18,7 @@ import org.mockito.Mockito;
 
 import java.util.Optional;
 
-import static com.example.sns.exception.ErrorCode.POST_NOT_FOUND;
-import static com.example.sns.exception.ErrorCode.USERNAME_NOT_FOUND;
+import static com.example.sns.exception.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -36,6 +36,7 @@ class CommentServiceTest {
     }
 
     User givenUser1 = UserInfoFixture.get("user", "password1");
+    User givenUser2 = UserInfoFixture.get("user2", "password2");
     Post givenPost1 = PostInfoFixture.get(givenUser1.getUserName(), givenUser1.getPassword());
     Comment givenComment = CommentFixture.get(givenUser1.getUserName(), givenUser1.getPassword());
 
@@ -43,8 +44,8 @@ class CommentServiceTest {
     void 댓글_작성_성공() throws Exception {
         // given
         CommentCreateRequestDto requestDto = new CommentCreateRequestDto("testComment");
-        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
         when(userRepository.findByUserName(givenUser1.getUserName())).thenReturn(Optional.of(givenUser1));
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
         // when
         when(commentRepository.save(any())).thenReturn(givenComment);
         // then
@@ -55,8 +56,8 @@ class CommentServiceTest {
     void 댓글_작성_실패_포스트없음() throws Exception {
         // given
         CommentCreateRequestDto requestDto = new CommentCreateRequestDto("testComment");
-        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.empty());
         when(userRepository.findByUserName(givenUser1.getUserName())).thenReturn(Optional.of(givenUser1));
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.empty());
         // when
         when(commentRepository.save(any())).thenReturn(givenComment);
         SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
@@ -70,8 +71,8 @@ class CommentServiceTest {
     void 댓글_작성_실패_로그인_안됨() throws Exception {
         // given
         CommentCreateRequestDto requestDto = new CommentCreateRequestDto("testComment");
-        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
         when(userRepository.findByUserName(givenUser1.getUserName())).thenReturn(Optional.empty());
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
         // when
         when(commentRepository.save(any())).thenReturn(givenComment);
         SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
@@ -79,6 +80,76 @@ class CommentServiceTest {
         });
         // then
         assertEquals(USERNAME_NOT_FOUND, springBootAppException.getErrorCode());
+    }
+
+    @Test
+    void 댓글_수정_성공() throws Exception {
+        // given
+        CommentUpdateRequestDto requestDto = new CommentUpdateRequestDto("testUpdate");
+        when(userRepository.findByUserName(givenUser1.getUserName())).thenReturn(Optional.of(givenUser1));
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
+        when(commentRepository.findById(givenComment.getId())).thenReturn(Optional.of(givenComment));
+        // when
+        // then
+        assertDoesNotThrow(() -> commentService.update(requestDto, givenPost1.getId(),
+                givenComment.getId(), givenUser1.getUserName()));
+    }
+
+    @Test
+    void 댓글_수정_실패_포스트없음() throws Exception {
+        // given
+        CommentUpdateRequestDto requestDto = new CommentUpdateRequestDto("testUpdate");
+        when(userRepository.findByUserName(givenUser1.getUserName())).thenReturn(Optional.of(givenUser1));
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.empty());
+        when(commentRepository.findById(givenComment.getId())).thenReturn(Optional.of(givenComment));
+        // when
+        // then
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
+            commentService.update(requestDto, givenPost1.getId(),
+                    givenComment.getId(), givenUser1.getUserName());
+        });
+
+        assertEquals(POST_NOT_FOUND, springBootAppException.getErrorCode());
+    }
+
+    @Test
+    void 댓글_수정_실패_댓글없음() throws Exception {
+        // given
+        CommentUpdateRequestDto requestDto = new CommentUpdateRequestDto("testUpdate");
+        // 댓글쓴이
+        when(userRepository.findByUserName(givenUser1.getUserName())).thenReturn(Optional.of(givenUser1));
+        // 댓글수정자
+        when(userRepository.findByUserName(givenUser2.getUserName())).thenReturn(Optional.of(givenUser2));
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
+        when(commentRepository.findById(givenComment.getId())).thenReturn(Optional.empty());
+        // when
+        // then
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
+            commentService.update(requestDto, givenPost1.getId(),
+                    givenComment.getId(), givenUser2.getUserName());
+        });
+
+        assertEquals(COMMENT_NOT_FOUND, springBootAppException.getErrorCode());
+    }
+
+    @Test
+    void 댓글_수정_실패_작성자_불일치() throws Exception {
+        // given
+        CommentUpdateRequestDto requestDto = new CommentUpdateRequestDto("testUpdate");
+        // 댓글쓴이
+        when(userRepository.findByUserName(givenUser1.getUserName())).thenReturn(Optional.of(givenUser1));
+        // 댓글수정자
+        when(userRepository.findByUserName(givenUser2.getUserName())).thenReturn(Optional.of(givenUser2));
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
+        when(commentRepository.findById(givenComment.getId())).thenReturn(Optional.of(givenComment));
+        // when
+        // then
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
+            commentService.update(requestDto, givenPost1.getId(),
+                    givenComment.getId(), givenUser2.getUserName());
+        });
+
+        assertEquals(INVALID_PERMISSION, springBootAppException.getErrorCode());
     }
 
 }
