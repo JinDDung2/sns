@@ -11,9 +11,13 @@ import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.sns.exception.ErrorCode.*;
 
@@ -45,9 +49,10 @@ public class CommentService {
     public Page<CommentReadResponseDto> findAllByPage(Integer postId, Pageable pageable) {
         // 포스트 존재 유무
         findPost(postId);
+        List<CommentReadResponseDto> comments = commentRepository.findCommentsByPostId(postId).stream()
+                .map(CommentReadResponseDto::from).collect(Collectors.toList());
 
-        Page<Comment> pages = commentRepository.findAll(pageable);
-        return pages.map(CommentReadResponseDto::from);
+        return new PageImpl<>(comments, pageable, comments.size());
     }
 
     public CommentUpdateResponseDto update(CommentUpdateRequestDto requestDto,
