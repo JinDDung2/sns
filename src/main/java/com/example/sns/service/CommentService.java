@@ -5,11 +5,14 @@ import com.example.sns.entity.Post;
 import com.example.sns.entity.User;
 import com.example.sns.entity.dto.CommentCreateRequestDto;
 import com.example.sns.entity.dto.CommentCreateResponseDto;
+import com.example.sns.entity.dto.CommentReadResponseDto;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.repository.CommentRepository;
 import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +32,8 @@ public class CommentService {
      * 비지니스 로직 CRUD
      */
 
-    public CommentCreateResponseDto createComment(Integer postId, CommentCreateRequestDto commentCreateRequestDto,
-                                                  String userName) {
+    public CommentCreateResponseDto createComment(CommentCreateRequestDto commentCreateRequestDto,
+                                                  Integer postId, String userName) {
         // 포스터 존재 유무
         Post post = findPost(postId);
         // 유저아이디 일치
@@ -39,6 +42,14 @@ public class CommentService {
         Comment comment = commentCreateRequestDto.toEntity(user, post);
         commentRepository.save(comment);
         return CommentCreateResponseDto.from(comment);
+    }
+
+    public Page<CommentReadResponseDto> findAllByPage(Integer postId, Pageable pageable) {
+        // 포스트 존재 유무
+        findPost(postId);
+
+        Page<Comment> pages = commentRepository.findAll(pageable);
+        return pages.map(CommentReadResponseDto::from);
     }
 
     /**
