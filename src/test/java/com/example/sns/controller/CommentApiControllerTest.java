@@ -6,19 +6,25 @@ import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.service.CommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.example.sns.exception.ErrorCode.POST_NOT_FOUND;
 import static com.example.sns.exception.ErrorCode.USERNAME_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -93,5 +99,22 @@ class CommentApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(USERNAME_NOT_FOUND.getHttpStatus().value()))
                 .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 댓글_리스트_조회_성공() throws Exception {
+        mockMvc.perform(get("/api/v1/posts/1/comments")
+                        .param("size", "10")
+                        .param("sort", "id, DESC"))
+                .andExpect(status().isOk());
+
+        ArgumentCaptor<Pageable> pageableArgumentCaptor = ArgumentCaptor.forClass(Pageable.class);
+
+        verify(commentService).findAllByPage(any(), pageableArgumentCaptor.capture());
+        PageRequest pageRequest = (PageRequest) pageableArgumentCaptor.getValue();
+
+        assertEquals(10, pageRequest.getPageSize());
+        assertEquals(Sort.by("id", "DESC"), pageRequest.withSort(Sort.by("id", "DESC")).getSort());
     }
 }
