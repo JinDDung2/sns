@@ -2,10 +2,9 @@ package com.example.sns.service;
 
 import com.example.sns.entity.Comment;
 import com.example.sns.entity.Post;
+import com.example.sns.entity.Role;
 import com.example.sns.entity.User;
-import com.example.sns.entity.dto.CommentCreateRequestDto;
-import com.example.sns.entity.dto.CommentCreateResponseDto;
-import com.example.sns.entity.dto.CommentReadResponseDto;
+import com.example.sns.entity.dto.*;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.repository.CommentRepository;
 import com.example.sns.repository.PostRepository;
@@ -16,8 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.sns.exception.ErrorCode.POST_NOT_FOUND;
-import static com.example.sns.exception.ErrorCode.USERNAME_NOT_FOUND;
+import static com.example.sns.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +48,23 @@ public class CommentService {
 
         Page<Comment> pages = commentRepository.findAll(pageable);
         return pages.map(CommentReadResponseDto::from);
+    }
+
+    public CommentUpdateResponseDto update(CommentUpdateRequestDto requestDto,
+                                           Integer postId, Integer commentId, String userName) {
+        findPost(postId);
+        User user = findUser(userName);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> {
+            throw new SpringBootAppException(COMMENT_NOT_FOUND, "해당 댓글이 없습니다.");
+        });
+
+        if (!user.getUserName().equals(comment.getCommentUser().getUserName())
+                && comment.getCommentUser().getRole() != Role.ADMIN) {
+            throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
+        }
+
+        comment.update(requestDto.getComment());
+        return CommentUpdateResponseDto.from(comment);
     }
 
     /**

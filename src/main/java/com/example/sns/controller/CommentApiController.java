@@ -1,8 +1,6 @@
 package com.example.sns.controller;
 
-import com.example.sns.entity.dto.CommentCreateRequestDto;
-import com.example.sns.entity.dto.CommentCreateResponseDto;
-import com.example.sns.entity.dto.CommentReadResponseDto;
+import com.example.sns.entity.dto.*;
 import com.example.sns.service.CommentService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -29,9 +27,9 @@ public class CommentApiController {
     })
     @PostMapping("/{postId}/comments")
     public RsData<CommentCreateResponseDto> createComment(@PathVariable Integer postId,
-                                                          @RequestBody CommentCreateRequestDto commentCreateRequestDto,
+                                                          @RequestBody CommentCreateRequestDto requestDto,
                                                           Authentication authentication) {
-        CommentCreateResponseDto response = commentService.createComment(commentCreateRequestDto,
+        CommentCreateResponseDto response = commentService.createComment(requestDto,
                 postId, authentication.getName());
 
         return RsData.success(response);
@@ -47,5 +45,18 @@ public class CommentApiController {
                                                                @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<CommentReadResponseDto> pages = commentService.findAllByPage(postId, pageable);
         return RsData.success(pages);
+    }
+
+    @ApiOperation(value = "댓글수정")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "id, comment, userName, postId, createdAt 반환"),
+            @ApiResponse(code = 404, message = "POST_NOT_FOUND or USERNAME_NOT_FOUND or C 반환")
+    })
+    @PutMapping("{postId}/comments/{commentId}")
+    public RsData<CommentUpdateResponseDto> update(@PathVariable Integer postId, @PathVariable Integer commentId,
+                                                   @RequestBody CommentUpdateRequestDto requestDto,
+                                                   Authentication authentication) {
+        CommentUpdateResponseDto response = commentService.update(requestDto, postId, commentId, authentication.getName());
+        return RsData.success(response);
     }
 }
