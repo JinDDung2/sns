@@ -40,6 +40,17 @@ public class PostApiController {
         return RsData.success(pages);
     }
 
+    @ApiOperation(value = "마이피드 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "pageable 반환")
+    })
+    @GetMapping("/my")
+    public RsData<Page<PostMyFeedResponseDto>> findMyFeed(@PageableDefault(sort = "id", direction = Sort.Direction.DESC,size = 20) Pageable pageable,
+                                                          Authentication authentication) {
+        Page<PostMyFeedResponseDto> myFeed = postService.findMyFeed(authentication.getName(), pageable);
+        return RsData.success(myFeed);
+    }
+
     @ApiOperation(value = "포스트 단건 조회")
     @ApiResponses({
             @ApiResponse(code = 200,
