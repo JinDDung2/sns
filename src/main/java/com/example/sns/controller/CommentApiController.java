@@ -23,6 +23,7 @@ public class CommentApiController {
     @ApiOperation(value = "댓글쓰기")
     @ApiResponses({
             @ApiResponse(code = 200, message = "id, comment, userName, postId, createdAt 반환"),
+            @ApiResponse(code = 401, message = "사용자 권한이 없습니다."),
             @ApiResponse(code = 404, message = "POST_NOT_FOUND or USERNAME_NOT_FOUND 반환")
     })
     @PostMapping("/{postId}/comments")
@@ -42,7 +43,7 @@ public class CommentApiController {
     })
     @GetMapping("{postId}/comments")
     public RsData<Page<CommentReadResponseDto>> findAllComment(@PathVariable Integer postId,
-                                                               @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                               @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<CommentReadResponseDto> pages = commentService.findAllByPage(postId, pageable);
         return RsData.success(pages);
     }
@@ -50,13 +51,27 @@ public class CommentApiController {
     @ApiOperation(value = "댓글수정")
     @ApiResponses({
             @ApiResponse(code = 200, message = "id, comment, userName, postId, createdAt 반환"),
-            @ApiResponse(code = 404, message = "POST_NOT_FOUND or USERNAME_NOT_FOUND or C 반환")
+            @ApiResponse(code = 401, message = "사용자 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "POST_NOT_FOUND or USERNAME_NOT_FOUND or COMMENT_NOT_FOUND 반환")
     })
     @PutMapping("{postId}/comments/{commentId}")
     public RsData<CommentUpdateResponseDto> update(@PathVariable Integer postId, @PathVariable Integer commentId,
                                                    @RequestBody CommentUpdateRequestDto requestDto,
                                                    Authentication authentication) {
         CommentUpdateResponseDto response = commentService.update(requestDto, postId, commentId, authentication.getName());
+        return RsData.success(response);
+    }
+
+    @ApiOperation(value = "댓글삭제")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "id, comment, userName, postId, createdAt 반환"),
+            @ApiResponse(code = 401, message = "사용자 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "POST_NOT_FOUND or USERNAME_NOT_FOUND or COMMENT_NOT_FOUND 반환")
+    })
+    @DeleteMapping("{postId}/comments/{commentId}")
+    public RsData<CommentDeleteResponseDto> deleteById(@PathVariable Integer postId, @PathVariable Integer commentId,
+                                                   Authentication authentication) {
+        CommentDeleteResponseDto response = commentService.deleteById(postId, commentId, authentication.getName());
         return RsData.success(response);
     }
 }
