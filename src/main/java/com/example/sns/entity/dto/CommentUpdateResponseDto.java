@@ -1,6 +1,7 @@
 package com.example.sns.entity.dto;
 
 import com.example.sns.entity.Comment;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,7 +14,9 @@ public class CommentUpdateResponseDto {
     private String comment;
     private String userName;
     private Integer postId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime lastModifiedAt;
 
     @Builder
