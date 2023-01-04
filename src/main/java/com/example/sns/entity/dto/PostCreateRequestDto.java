@@ -28,6 +28,7 @@ public class PostCreateRequestDto {
                 .title(this.title)
                 .body(this.body)
                 .user(user)
+                .likeCounts(0)
                 .build();
     }
 }

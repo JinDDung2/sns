@@ -33,16 +33,21 @@ public class Post extends BaseTime{
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    private List<PostLike> postLikes = new ArrayList<>();
+
+    private Integer likeCounts;
+
     @Builder
-    public Post(Integer id, String title, String body, User user, List<Comment> comments) {
+    public Post(Integer id, String title, String body, User user, Integer likeCounts) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.user = user;
-        this.comments = comments;
+        this.likeCounts = likeCounts;
     }
 
     public void update(String title, String body) {
