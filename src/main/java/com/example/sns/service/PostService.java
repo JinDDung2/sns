@@ -8,13 +8,9 @@ import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.sns.entity.Role.ADMIN;
 import static com.example.sns.exception.ErrorCode.*;
@@ -48,10 +44,9 @@ public class PostService {
     public Page<PostMyFeedResponseDto> findMyFeed(String userName, Pageable pageable) {
         User user = findUser(userName);
 
-        List<PostMyFeedResponseDto> myFeed = postRepository.findMyFeedByUserId(user.getId()).stream()
-                .map(PostMyFeedResponseDto::from).collect(Collectors.toList());
+        Page<Post> pages = postRepository.findMyFeedByUserId(user.getId(), pageable);
 
-        return new PageImpl<>(myFeed, pageable, myFeed.size());
+        return pages.map(PostMyFeedResponseDto::from);
     }
 
     @Transactional(readOnly = true)

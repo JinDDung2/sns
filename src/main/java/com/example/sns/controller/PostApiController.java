@@ -22,7 +22,8 @@ public class PostApiController {
 
     @ApiOperation(value = "글쓰기")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "postId, message 반환")
+            @ApiResponse(code = 200, message = "postId, message 반환"),
+            @ApiResponse(code = 401, message = "사용자 권한이 없습니다.")
     })
     @PostMapping("")
     public RsData<PostCreateResponseDto> createPost(@RequestBody PostCreateRequestDto requestDto, Authentication authentication) {
@@ -42,10 +43,12 @@ public class PostApiController {
 
     @ApiOperation(value = "마이피드 조회")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "pageable 반환")
+            @ApiResponse(code = 200, message = "pageable 반환"),
+            @ApiResponse(code = 401, message = "사용자 권한이 없습니다.")
     })
     @GetMapping("/my")
-    public RsData<Page<PostMyFeedResponseDto>> findMyFeed(@PageableDefault(sort = "id", direction = Sort.Direction.DESC,size = 20) Pageable pageable,
+    public RsData<Page<PostMyFeedResponseDto>> findMyFeed(@PageableDefault(sort = "createdDate",
+            direction = Sort.Direction.DESC,size = 20) Pageable pageable,
                                                           Authentication authentication) {
         Page<PostMyFeedResponseDto> myFeed = postService.findMyFeed(authentication.getName(), pageable);
         return RsData.success(myFeed);
@@ -65,7 +68,7 @@ public class PostApiController {
     @ApiOperation(value = "포스트 수정")
     @ApiResponses({
             @ApiResponse(code = 200, message = "postId, message"),
-            @ApiResponse(code = 401, message = "작성자와 수정자 불일치"),
+            @ApiResponse(code = 401, message = "작성자와 수정자 불일치 or 사용자 권한이 없습니다."),
             @ApiResponse(code = 404, message = "해당 포스트 없음")
     })
     @PutMapping("/{postId}")
@@ -79,7 +82,7 @@ public class PostApiController {
     @ApiOperation(value = "포스트 삭제")
     @ApiResponses({
             @ApiResponse(code = 200, message = "postId, message"),
-            @ApiResponse(code = 401, message = "작성자와 삭제유저 불일치"),
+            @ApiResponse(code = 401, message = "작성자와 삭제유저 불일치 or 사용자 권한이 없습니다."),
             @ApiResponse(code = 404, message = "해당 포스트 없음, 유저 존재하지 않음")
     })
     @DeleteMapping("/{postId}")
