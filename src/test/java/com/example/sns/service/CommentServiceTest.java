@@ -151,5 +151,35 @@ class CommentServiceTest {
 
         assertEquals(INVALID_PERMISSION, springBootAppException.getErrorCode());
     }
+    
+    @Test
+    void 삭제_실패_포스트없음() throws Exception {
+        // given
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.empty());
+        when(commentRepository.findById(givenComment.getId())).thenReturn(Optional.of(givenComment));
+        // when
+        // then
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
+            commentService.deleteById(givenPost1.getId(), givenComment.getId(), givenUser1.getUserName());
+        });
+
+        assertEquals(POST_NOT_FOUND, springBootAppException.getErrorCode());
+    }
+
+    @Test
+    void 삭제_실패_작성자_삭제자_불일치() throws Exception {
+        // given
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
+        when(commentRepository.findById(givenComment.getId())).thenReturn(Optional.of(givenComment));
+        when(userRepository.findByUserName(givenUser2.getUserName())).thenReturn(Optional.of(givenUser2));
+        // when
+        // then
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
+            commentService.deleteById(givenPost1.getId(), givenComment.getId(), givenUser2.getUserName());
+        });
+
+        assertEquals(INVALID_PERMISSION, springBootAppException.getErrorCode());
+    }
+
 
 }

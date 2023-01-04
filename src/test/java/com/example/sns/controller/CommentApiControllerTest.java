@@ -1,10 +1,9 @@
 package com.example.sns.controller;
 
-import com.example.sns.entity.dto.CommentCreateRequestDto;
-import com.example.sns.entity.dto.CommentCreateResponseDto;
-import com.example.sns.entity.dto.CommentUpdateRequestDto;
-import com.example.sns.entity.dto.CommentUpdateResponseDto;
+import com.example.sns.entity.Comment;
+import com.example.sns.entity.dto.*;
 import com.example.sns.exception.SpringBootAppException;
+import com.example.sns.fixture.CommentFixture;
 import com.example.sns.service.CommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -207,6 +206,77 @@ class CommentApiControllerTest {
         mockMvc.perform(put("/api/v1/posts/1/comments/1")
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(DATABASE_ERROR.getHttpStatus().value()))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 댓글_삭제_성공() throws Exception {
+        Comment givenComment = CommentFixture.get("test1", "test1");
+
+        given(commentService.deleteById(any(), any(), any()))
+                .willReturn(new CommentDeleteResponseDto(givenComment.getId(), "댓글 삭제 완료"));
+
+        mockMvc.perform(delete("/api/v1/posts/1/comments/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 댓글_삭제_인증_실패() throws Exception {
+
+        given(commentService.deleteById(any(), any(), any()))
+                .willThrow(new SpringBootAppException(INVALID_TOKEN, "잘못된 토큰입니다."));
+
+        mockMvc.perform(delete("/api/v1/posts/1/comments/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(INVALID_TOKEN.getHttpStatus().value()))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 댓글_삭제_포스트_없음_실패() throws Exception {
+
+        given(commentService.deleteById(any(), any(), any()))
+                .willThrow(new SpringBootAppException(POST_NOT_FOUND, "해당 포스트가 없습니다."));
+
+        mockMvc.perform(delete("/api/v1/posts/1/comments/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(POST_NOT_FOUND.getHttpStatus().value()))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 댓글_삭제_작성자_삭제자_불일치_실패() throws Exception {
+
+        given(commentService.deleteById(any(), any(), any()))
+                .willThrow(new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다."));
+
+        mockMvc.perform(delete("/api/v1/posts/1/comments/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(INVALID_PERMISSION.getHttpStatus().value()))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void 댓글_삭제_DB_에러() throws Exception {
+
+        given(commentService.deleteById(any(), any(), any()))
+                .willThrow(new SpringBootAppException(DATABASE_ERROR, "DB에러입니다."));
+
+        mockMvc.perform(delete("/api/v1/posts/1/comments/1")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(DATABASE_ERROR.getHttpStatus().value()))
                 .andDo(print());
