@@ -11,6 +11,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -100,7 +102,7 @@ class PostApiControllerTest {
         mockMvc.perform(get("/api/v1/posts")
                         .param("page", "0")
                         .param("size", "3")
-                        .param("sort", "createdAt,desc"))
+                        .param("sort", "createdAt,DESC"))
                 .andExpect(status().isOk());
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
@@ -110,8 +112,31 @@ class PostApiControllerTest {
 
         assertEquals(0, pageable.getPageNumber());
         assertEquals(3, pageable.getPageSize());
-        assertEquals(Sort.by("createdAt", "desc"), pageable.withSort(Sort.by("createdAt", "desc")).getSort());
+        assertEquals(Sort.by("createdAt", "DESC"), pageable.withSort(Sort.by("createdAt", "DESC")).getSort());
 
+    }
+
+    @Test
+    @WithMockUser
+    void 포스트_마이피드_성공() throws Exception {
+        given(postService.findMyFeed(any(), any())).willReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/posts/my")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+    @Test
+    @WithAnonymousUser
+    void 포스트_마이피드_비로그인_실패() throws Exception {
+        given(postService.findMyFeed(any(), any())).willReturn(Page.empty());
+        when(postService.findMyFeed(any(), any()))
+                .thenThrow(new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다."));
+
+        mockMvc.perform(get("/api/v1/posts/my")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is(INVALID_PERMISSION.getHttpStatus().value()));
     }
 
     @Test
