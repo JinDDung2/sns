@@ -64,6 +64,7 @@ public class PostService {
         }
 
         post.update(requestDto.getTitle(), requestDto.getBody());
+        postRepository.flush();
         return PostUpdateResponseDto.from(post);
     }
 

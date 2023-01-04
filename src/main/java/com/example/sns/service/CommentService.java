@@ -62,6 +62,7 @@ public class CommentService {
         }
 
         comment.update(requestDto.getComment());
+        commentRepository.flush();
         return CommentUpdateResponseDto.from(comment);
     }
 
