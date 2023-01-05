@@ -31,20 +31,16 @@ public class PostLikeService {
         User user = findUser(userName);
 
         // 이미 좋아요가 있을 경우 에러
-        if (postLikeRepository.findByPostAndUser(post, user).isPresent()) {
+        postLikeRepository.findByPostAndUser(post, user).ifPresent(like -> {
             throw new SpringBootAppException(DUPLICATED_LIKE, "이미 좋아요를 눌렀습니다.");
-        }
+        });
 
-        PostLike postLike = PostLike.builder()
-                .post(post)
-                .user(user)
-                .build();
-
-        postLikeRepository.save(postLike);
+        postLikeRepository.save(new PostLike(post, user));
         postRepository.increaseLikeCounts(postId);
     }
 
     public Integer findPostLike(Integer postId) {
+        findPost(postId);
         return postRepository.findByLikeCounts(postId);
     }
 

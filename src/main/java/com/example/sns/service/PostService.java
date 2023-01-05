@@ -4,6 +4,8 @@ import com.example.sns.entity.Post;
 import com.example.sns.entity.User;
 import com.example.sns.entity.dto.*;
 import com.example.sns.exception.SpringBootAppException;
+import com.example.sns.repository.CommentRepository;
+import com.example.sns.repository.PostLikeRepository;
 import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * 비지니스로직
@@ -77,6 +81,8 @@ public class PostService {
         }
 
         postRepository.deleteById(postId);
+        commentRepository.deleteAllByPost(postId);
+        postLikeRepository.deleteAllByPost(postId);
         return PostDeleteResponseDto.from(post);
     }
 

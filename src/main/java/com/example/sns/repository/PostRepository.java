@@ -13,11 +13,11 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, Integer> {
     Page<Post> findMyFeedByUserId(Integer userId, Pageable pageable);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Post p set p.likeCounts = p.likeCounts + 1 where p.id = :postId")
     Integer increaseLikeCounts(@Param("postId") Integer postId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Post p set p.likeCounts = p.likeCounts - 1 where p.id = :postId")
     Integer decreaseLikeCounts(@Param("postId") Integer postId);
 

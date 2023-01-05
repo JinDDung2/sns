@@ -33,7 +33,7 @@ public class Post extends BaseTime{
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
