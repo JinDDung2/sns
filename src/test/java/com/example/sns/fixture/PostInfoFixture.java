@@ -10,6 +10,7 @@ public class PostInfoFixture {
                 .title("title")
                 .body("body")
                 .user(UserInfoFixture.get(userName, password))
+                .likeCounts(0)
                 .build();
     }
 }
