@@ -1,10 +1,9 @@
 package com.example.sns.service;
 
-import com.example.sns.entity.Comment;
-import com.example.sns.entity.Post;
-import com.example.sns.entity.User;
+import com.example.sns.entity.*;
 import com.example.sns.entity.dto.*;
 import com.example.sns.exception.SpringBootAppException;
+import com.example.sns.repository.AlarmRepository;
 import com.example.sns.repository.CommentRepository;
 import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
@@ -14,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.sns.entity.AlarmType.*;
 import static com.example.sns.entity.Role.ADMIN;
 import static com.example.sns.exception.ErrorCode.*;
 
@@ -25,6 +25,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final AlarmRepository alarmRepository;
 
     /**
      * 비지니스 로직 CRUD
@@ -39,6 +40,7 @@ public class CommentService {
 
         Comment comment = commentCreateRequestDto.toEntity(user, post);
         commentRepository.save(comment);
+        alarmRepository.save(new Alarm(user.getId(), postId, NEW_COMMENT_ON_POST, post.getUser()));
         return CommentCreateResponseDto.from(comment);
     }
 

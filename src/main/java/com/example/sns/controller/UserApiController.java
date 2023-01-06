@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +49,17 @@ public class UserApiController {
     @PostMapping("{userId}/role/change")
     public RsData<UserRoleResponseDto> changeRole(@PathVariable Integer userId, Authentication authentication) {
         UserRoleResponseDto responseDto = userService.changeRole(userId, authentication.getName());
+        return RsData.success(responseDto);
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "알람 내용"),
+            @ApiResponse(code = 401, message = "잘못된 토큰입력")
+    })
+    @ApiOperation(value = "로그인")
+    @GetMapping("/alarm")
+    public RsData<Page<AlarmReadResponse>> findAlarm(Pageable pageable, Authentication authentication) {
+        Page<AlarmReadResponse> responseDto = userService.findAlarm(pageable, authentication.getName());
         return RsData.success(responseDto);
     }
 

@@ -1,9 +1,11 @@
 package com.example.sns.service;
 
+import com.example.sns.entity.Alarm;
 import com.example.sns.entity.Post;
 import com.example.sns.entity.PostLike;
 import com.example.sns.entity.User;
 import com.example.sns.exception.SpringBootAppException;
+import com.example.sns.repository.AlarmRepository;
 import com.example.sns.repository.PostLikeRepository;
 import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.sns.entity.AlarmType.NEW_LIKE_ON_POST;
 import static com.example.sns.exception.ErrorCode.*;
 
 @Service
@@ -21,6 +24,7 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final AlarmRepository alarmRepository;
 
     /**
      * 비지니스 로직 insert, find, delete
@@ -37,6 +41,7 @@ public class PostLikeService {
 
         postLikeRepository.save(new PostLike(post, user));
         postRepository.increaseLikeCounts(postId);
+        alarmRepository.save(new Alarm(user.getId(), postId, NEW_LIKE_ON_POST, post.getUser()));
     }
 
     public Integer findPostLike(Integer postId) {

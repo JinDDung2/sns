@@ -1,18 +1,23 @@
 package com.example.sns.service;
 
+import com.example.sns.entity.Alarm;
 import com.example.sns.entity.User;
 import com.example.sns.entity.dto.*;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.jwt.JwtTokenUtils;
+import com.example.sns.repository.AlarmRepository;
 import com.example.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.sns.entity.Role.*;
+import static com.example.sns.entity.Role.ADMIN;
+import static com.example.sns.entity.Role.USER;
 import static com.example.sns.exception.ErrorCode.*;
 
 @Service
@@ -23,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenUtils jwtTokenUtils;
+    private final AlarmRepository alarmRepository;
 
     @Value("${jwt.token.secret}")
     private String secretKey;
@@ -77,4 +83,13 @@ public class UserService {
 
             return UserRoleResponseDto.from(changeUser);
         }
+    public Page<AlarmReadResponse> findAlarm(Pageable pageable, String userName) {
+
+        User findUser = userRepository.findByUserName(userName).orElseThrow(() -> {
+            throw new SpringBootAppException(USERNAME_NOT_FOUND, userName + " 아이디가 존재하지 않습니다.");
+        });
+
+        Page<Alarm> pages = alarmRepository.findAllByUserId(findUser.getId(), pageable);
+        return pages.map(AlarmReadResponse::from);
+    }
 }
