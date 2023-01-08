@@ -3,6 +3,7 @@ package com.example.sns.config;
 import com.example.sns.controller.RsData;
 import com.example.sns.exception.ErrorCode;
 import com.example.sns.exception.ErrorResult;
+import com.example.sns.jwt.JwtExceptionFilter;
 import com.example.sns.jwt.JwtTokenFilter;
 import com.example.sns.jwt.JwtTokenUtils;
 import com.example.sns.service.UserService;
@@ -59,6 +60,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(new JwtTokenFilter(userService, secretKey, jwtTokenUtils), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtTokenFilter.class)
                 .exceptionHandling()
                 // 인증 실패 시 INVALID_PERMISSION 에러 발생
                 .authenticationEntryPoint(new AuthenticationEntryPoint() {
