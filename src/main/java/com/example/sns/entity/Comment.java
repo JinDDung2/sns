@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -15,7 +14,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "comments")
 @Where(clause = "deleted_date IS NULL")
-@SQLDelete(sql = "UPDATE comments SET deleted_date = CURRENT_TIMESTAMP where comment_id = ?")
 public class Comment extends BaseTime{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

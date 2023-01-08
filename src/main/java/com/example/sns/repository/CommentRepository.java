@@ -16,4 +16,8 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Modifying(clearAutomatically = true)
     @Query("update Comment c set c.deletedDate = current_timestamp where c.post.id = :postId")
     void deleteAllByPost(@Param("postId") Integer postId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Comment c set c.deletedDate = current_timestamp where c.id = :commentId")
+    void deleteById(@Param("commentId") Integer commentId);
 }

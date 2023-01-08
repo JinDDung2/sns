@@ -24,4 +24,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query("select p.likeCounts from Post p where p.id = :postId")
     Integer findByLikeCounts(@Param("postId") Integer postId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("update Post p set p.deletedDate = current_timestamp where p.id = :postId")
+    void deleteById(@Param("postId") Integer postId);
+
 }

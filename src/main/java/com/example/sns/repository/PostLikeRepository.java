@@ -18,4 +18,8 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Integer> {
     @Modifying(clearAutomatically = true)
     @Query("update PostLike pl set pl.deletedDate = CURRENT_TIMESTAMP where pl.post.id = :postId")
     void deleteAllByPost(@Param("postId") Integer postId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update PostLike pl set pl.deletedDate = CURRENT_TIMESTAMP where pl.id = :likeId")
+    void deleteById(@Param("likeId") Integer likeId);
 }

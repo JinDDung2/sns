@@ -3,7 +3,6 @@ package com.example.sns.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -13,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "alarms")
 @Where(clause = "deleted_date IS NULL")
-@SQLDelete(sql = "UPDATE alarms SET deleted_date = CURRENT_TIMESTAMP where alarm_id = ?")
 public class Alarm extends BaseTime{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
