@@ -4,9 +4,11 @@ import com.example.sns.exception.ErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.NestedServletException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,12 +20,14 @@ import java.util.NoSuchElementException;
 import static com.example.sns.exception.ErrorCode.DATABASE_ERROR;
 import static com.example.sns.exception.ErrorCode.INVALID_TOKEN;
 
+@Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (NullPointerException e) {
+            // null 이기에 값을 읽을 수 없음
+        } catch (NestedServletException e) {
             sendErrorResponse(response, INVALID_TOKEN.getMessage());
         } catch (ExpiredJwtException e) {
             // 토큰의 유효기간이 만료되었을 경우

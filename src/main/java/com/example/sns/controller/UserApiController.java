@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +60,7 @@ public class UserApiController {
     })
     @ApiOperation(value = "로그인")
     @GetMapping("/alarm")
-    public RsData<Page<AlarmReadResponse>> findAlarm(Pageable pageable, Authentication authentication) {
+    public RsData<Page<AlarmReadResponse>> findAlarm(@PageableDefault(size = 20, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
         Page<AlarmReadResponse> responseDto = userService.findAlarm(pageable, authentication.getName());
         return RsData.success(responseDto);
     }

@@ -44,6 +44,7 @@ public class PostLikeService {
         alarmRepository.save(new Alarm(user.getId(), postId, NEW_LIKE_ON_POST, post.getUser()));
     }
 
+    @Transactional(readOnly = true)
     public Integer findPostLike(Integer postId) {
         findPost(postId);
         return postRepository.findByLikeCounts(postId);
@@ -58,7 +59,12 @@ public class PostLikeService {
             throw new SpringBootAppException(LIKE_NOT_FOUND, "좋아요를 한 적이 없습니다.");
         });
 
+        Alarm alarm = alarmRepository.findByUserAndTargetId(user, postId).orElseThrow(() -> {
+            throw new SpringBootAppException(ALARM_NOT_FOUND, "알람을 한 적이 없습니다.");
+        });
+
         postLikeRepository.deleteById(postLike.getId());
+        alarmRepository.deleteById(alarm.getId());
         postRepository.decreaseLikeCounts(postId);
     }
 

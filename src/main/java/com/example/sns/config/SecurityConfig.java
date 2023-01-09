@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.example.sns.exception.ErrorCode.INVALID_PERMISSION;
+import static com.example.sns.exception.ErrorCode.ROLE_FORBIDDEN;
 
 @Configuration
 @EnableWebSecurity
@@ -48,11 +49,10 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .antMatchers(HttpMethod.GET, "/api/v1/posts/my").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/v1/posts/my, /api/v1/users/alarm").authenticated()
                 .antMatchers(HttpMethod.GET).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/users/join", "/api/v1/users/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
-                .antMatchers(HttpMethod.POST, "/api/v1/users/**/role/change").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT).authenticated()
                 .antMatchers(HttpMethod.DELETE).authenticated()
                 .and()
@@ -69,11 +69,11 @@ public class SecurityConfig {
                         makeErrorResponse(response, INVALID_PERMISSION);
                     }
                 })
-                // 인가 실패 시 INVALID_PERMISSION 에러 발생
+                // 인가 실패 시 ROLE_FORBIDDEN 에러 발생
                 .accessDeniedHandler(new AccessDeniedHandler() {
                     @Override
                     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-                        makeErrorResponse(response, INVALID_PERMISSION);
+                        makeErrorResponse(response, ROLE_FORBIDDEN);
                     }
                 })
                 .and()
