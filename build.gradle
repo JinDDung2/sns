@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.22'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 
     compileOnly 'org.projectlombok:lombok'
