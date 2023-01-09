@@ -9,6 +9,7 @@ import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.fixture.CommentFixture;
 import com.example.sns.fixture.PostInfoFixture;
 import com.example.sns.fixture.UserInfoFixture;
+import com.example.sns.repository.AlarmRepository;
 import com.example.sns.repository.CommentRepository;
 import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
@@ -28,11 +29,13 @@ class CommentServiceTest {
     CommentRepository commentRepository = Mockito.mock(CommentRepository.class);
     UserRepository userRepository = Mockito.mock(UserRepository.class);
     PostRepository postRepository = Mockito.mock(PostRepository.class);
+    AlarmRepository alarmRepository = Mockito.mock(AlarmRepository.class);
+
     CommentService commentService;
 
     @BeforeEach
     void setUp() {
-        commentService = new CommentService(commentRepository, postRepository, userRepository);
+        commentService = new CommentService(commentRepository, postRepository, userRepository, alarmRepository);
     }
 
     User givenUser1 = UserInfoFixture.get("user", "password1");
@@ -93,6 +96,23 @@ class CommentServiceTest {
         // then
         assertDoesNotThrow(() -> commentService.update(requestDto, givenPost1.getId(),
                 givenComment.getId(), givenUser1.getUserName()));
+    }
+
+    @Test
+    void 댓글_수정_실패_유저없음() throws Exception {
+        // given
+        CommentUpdateRequestDto requestDto = new CommentUpdateRequestDto("testUpdate");
+        when(userRepository.findByUserName(givenUser1.getUserName())).thenReturn(Optional.empty());
+        when(postRepository.findById(givenPost1.getId())).thenReturn(Optional.of(givenPost1));
+        when(commentRepository.findById(givenComment.getId())).thenReturn(Optional.of(givenComment));
+        // when
+        // then
+        SpringBootAppException springBootAppException = assertThrows(SpringBootAppException.class, () -> {
+            commentService.update(requestDto, givenPost1.getId(),
+                    givenComment.getId(), givenUser1.getUserName());
+        });
+
+        assertEquals(USERNAME_NOT_FOUND, springBootAppException.getErrorCode());
     }
 
     @Test

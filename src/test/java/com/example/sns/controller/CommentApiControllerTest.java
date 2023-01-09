@@ -81,7 +81,7 @@ class CommentApiControllerTest {
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(POST_NOT_FOUND.getHttpStatus().value()))
+                .andExpect(status().isNotFound())
                 .andDo(print());
 
     }
@@ -98,7 +98,7 @@ class CommentApiControllerTest {
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(USERNAME_NOT_FOUND.getHttpStatus().value()))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -153,13 +153,13 @@ class CommentApiControllerTest {
         CommentUpdateRequestDto requestDto = new CommentUpdateRequestDto("testUpdate");
 
         given(commentService.update(any(CommentUpdateRequestDto.class), any(), any(), any()))
-                .willThrow(new SpringBootAppException(INVALID_TOKEN, "잘못된 토큰입니다."));
+                .willThrow(new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다."));
 
         mockMvc.perform(put("/api/v1/posts/1/comments/1")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(requestDto)))
-                .andExpect(status().is(INVALID_TOKEN.getHttpStatus().value()))
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
@@ -175,7 +175,7 @@ class CommentApiControllerTest {
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(POST_NOT_FOUND.getHttpStatus().value()))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -191,7 +191,7 @@ class CommentApiControllerTest {
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(INVALID_PERMISSION.getHttpStatus().value()))
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
@@ -207,7 +207,7 @@ class CommentApiControllerTest {
                         .with(csrf())
                         .content(objectMapper.writeValueAsBytes(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(DATABASE_ERROR.getHttpStatus().value()))
+                .andExpect(status().isInternalServerError())
                 .andDo(print());
     }
 
@@ -227,7 +227,7 @@ class CommentApiControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithAnonymousUser
     void 댓글_삭제_인증_실패() throws Exception {
 
         given(commentService.deleteById(any(), any(), any()))
@@ -236,7 +236,7 @@ class CommentApiControllerTest {
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(INVALID_TOKEN.getHttpStatus().value()))
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
@@ -250,7 +250,7 @@ class CommentApiControllerTest {
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(POST_NOT_FOUND.getHttpStatus().value()))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -264,7 +264,7 @@ class CommentApiControllerTest {
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(INVALID_PERMISSION.getHttpStatus().value()))
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
@@ -278,7 +278,7 @@ class CommentApiControllerTest {
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(DATABASE_ERROR.getHttpStatus().value()))
+                .andExpect(status().isInternalServerError())
                 .andDo(print());
     }
 }
