@@ -8,6 +8,7 @@ import com.example.sns.entity.User;
 import com.example.sns.exception.ErrorCode;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.jwt.JwtTokenUtils;
+import com.example.sns.repository.AlarmRepository;
 import com.example.sns.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class UserServiceTest {
@@ -30,6 +32,8 @@ class UserServiceTest {
     UserRepository userRepository = Mockito.mock(UserRepository.class);
     BCryptPasswordEncoder passwordEncoder = Mockito.mock(BCryptPasswordEncoder.class);
     JwtTokenUtils jwtTokenUtils = Mockito.mock(JwtTokenUtils.class);
+    AlarmRepository alarmRepository = mock(AlarmRepository.class);
+
     @Value("${jwt.token.secret}")
     private String secretKey;
     private long expiredTimeMs = 1000 * 60 * 60;
@@ -37,7 +41,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setup() {
-        userService = new UserService(userRepository, passwordEncoder, jwtTokenUtils);
+        userService = new UserService(userRepository, passwordEncoder, jwtTokenUtils, alarmRepository);
     }
 
     User user = User.builder()
