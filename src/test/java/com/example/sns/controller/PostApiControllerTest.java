@@ -122,6 +122,7 @@ class PostApiControllerTest {
         given(postService.findMyFeed(any(), any())).willReturn(Page.empty());
 
         mockMvc.perform(get("/api/v1/posts/my")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -134,9 +135,10 @@ class PostApiControllerTest {
                 .thenThrow(new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다."));
 
         mockMvc.perform(get("/api/v1/posts/my")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().is(INVALID_PERMISSION.getHttpStatus().value()));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

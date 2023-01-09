@@ -12,7 +12,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.example.sns.exception.ErrorCode.INVALID_PERMISSION;
+import static com.example.sns.exception.ErrorCode.INVALID_TOKEN;
 import static com.example.sns.exception.ErrorCode.POST_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -52,11 +52,13 @@ class PostLikeApiControllerTest {
     @Test
     @WithAnonymousUser
     void 좋아요_비로그인_실패() throws Exception {
+        doThrow(new SpringBootAppException(INVALID_TOKEN, "잘못된 토큰입니다."))
+                .when(postLikeService).insertLike(any(), any());
 
         mockMvc.perform(post("/api/v1/posts/1/likes")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(INVALID_PERMISSION.getHttpStatus().value()))
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
@@ -68,7 +70,7 @@ class PostLikeApiControllerTest {
 
         mockMvc.perform(post("/api/v1/posts/1/likes")
                         .with(csrf()))
-                .andExpect(status().is(POST_NOT_FOUND.getHttpStatus().value()))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 

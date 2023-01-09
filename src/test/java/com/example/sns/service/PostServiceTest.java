@@ -9,6 +9,8 @@ import com.example.sns.entity.User;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.fixture.PostInfoFixture;
 import com.example.sns.fixture.UserInfoFixture;
+import com.example.sns.repository.CommentRepository;
+import com.example.sns.repository.PostLikeRepository;
 import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,10 +32,13 @@ class PostServiceTest {
 
     PostRepository postRepository = Mockito.mock(PostRepository.class);
     UserRepository userRepository = Mockito.mock(UserRepository.class);
+    PostLikeRepository postLikeRepository = Mockito.mock(PostLikeRepository.class);
+    CommentRepository commentRepository = Mockito.mock(CommentRepository.class);
+
     PostService postService;
     @BeforeEach
     void setUp() {
-        postService = new PostService(postRepository, userRepository);
+        postService = new PostService(postRepository, userRepository, postLikeRepository, commentRepository);
     }
 
     // 글쓴 유저
