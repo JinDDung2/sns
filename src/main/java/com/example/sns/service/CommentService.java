@@ -44,6 +44,7 @@ public class CommentService {
         return CommentCreateResponseDto.from(comment);
     }
 
+    @Transactional(readOnly = true)
     public Page<CommentReadResponseDto> findAllByPage(Integer postId, Pageable pageable) {
         // 포스트 존재 유무
         findPost(postId);
@@ -59,7 +60,7 @@ public class CommentService {
         Comment comment = findComment(commentId);
 
         if (!user.getUserName().equals(comment.getCommentUser().getUserName())
-                && comment.getCommentUser().getRole() != ADMIN) {
+                && user.getRole() != ADMIN) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
@@ -75,7 +76,7 @@ public class CommentService {
         Comment comment = findComment(commentId);
 
         if(!user.getUserName().equals(comment.getCommentUser().getUserName())
-        && comment.getCommentUser().getRole() != ADMIN) {
+        && user.getRole() != ADMIN) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 

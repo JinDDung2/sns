@@ -73,16 +73,17 @@ public class UserService {
             throw new SpringBootAppException(USERNAME_NOT_FOUND, "유저가 존재하지 않습니다.");
         });
 
-        if (admin.getRole() == ADMIN || changeUser.getRole() == USER) {
-            changeUser.upgradeAdmin(changeUser);
+        if (admin.getRole() != ADMIN) {
+            throw new SpringBootAppException(ROLE_FORBIDDEN, "접근 권한이 없습니다.");
         }
 
-        if (admin.getRole() == ADMIN || changeUser.getRole() == ADMIN) {
-            changeUser.downgradeUser(changeUser);
-        }
+        if (changeUser.getRole() == USER) changeUser.upgradeAdmin(changeUser);
+        else if (changeUser.getRole() == ADMIN) changeUser.downgradeUser(changeUser);
 
-            return UserRoleResponseDto.from(changeUser);
-        }
+        return UserRoleResponseDto.from(changeUser);
+    }
+
+    @Transactional(readOnly = true)
     public Page<AlarmReadResponse> findAlarm(Pageable pageable, String userName) {
 
         User findUser = userRepository.findByUserName(userName).orElseThrow(() -> {

@@ -61,9 +61,9 @@ public class PostService {
 
     public PostUpdateResponseDto update(PostUpdateRequestDto requestDto, Integer postId, String userName) {
         Post post = findPost(postId);
-        findUser(userName);
+        User user = findUser(userName);
 
-        if (!post.getUser().getUserName().equals(userName) && post.getUser().getRole() != ADMIN) {
+        if (!post.getUser().getUserName().equals(userName) && user.getRole() != ADMIN) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
@@ -74,9 +74,9 @@ public class PostService {
 
     public PostDeleteResponseDto deleteById(Integer postId, String userName) {
         Post post = findPost(postId);
-        findUser(userName);
+        User user = findUser(userName);
 
-        if (!post.getUser().getUserName().equals(userName) && post.getUser().getRole() != ADMIN) {
+        if (!post.getUser().getUserName().equals(userName) && user.getRole() != ADMIN) {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
