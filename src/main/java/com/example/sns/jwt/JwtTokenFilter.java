@@ -34,7 +34,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String requestHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (requestHeader == null || !requestHeader.startsWith("Bearer ")) {
-            log.error("HttpHeaders.AUTHORIZATION이 null 이거나 Bearer 로 시작하지 않습니다. HttpHeaders.AUTHORIZATION={}", requestHeader);
             filterChain.doFilter(request, response);
             return;
         }
