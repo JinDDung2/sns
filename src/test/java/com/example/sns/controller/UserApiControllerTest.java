@@ -136,7 +136,7 @@ class UserApiControllerTest {
 
         given(userService.findAlarm(any(), any())).willReturn(Page.empty());
 
-        mockMvc.perform(get("/api/v1/users/alarm")
+        mockMvc.perform(get("/api/v1/alarms")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -152,7 +152,7 @@ class UserApiControllerTest {
                 .thenThrow(new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다."));
 
 
-        mockMvc.perform(get("/api/v1/users/alarm")
+        mockMvc.perform(get("/api/v1/alarms")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
