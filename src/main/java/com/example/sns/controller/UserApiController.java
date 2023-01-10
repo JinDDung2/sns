@@ -59,7 +59,7 @@ public class UserApiController {
             @ApiResponse(code = 401, message = "잘못된 토큰입력")
     })
     @ApiOperation(value = "알람")
-    @GetMapping("/alarm")
+    @GetMapping("/alarms")
     public RsData<Page<AlarmReadResponse>> findAlarm(@PageableDefault(size = 20, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
         Page<AlarmReadResponse> responseDto = userService.findAlarm(pageable, authentication.getName());
         return RsData.success(responseDto);
