@@ -28,10 +28,24 @@ public class PostLikeApiController {
         return RsData.success("좋아요를 눌렀습니다.");
     }
 
+    @ApiOperation(value = "좋아요 추가 및 삭제(좋아요 누르면 좋아요 추가, 좋아요 다시 누르면 삭제)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "좋아요를 눌렀습니다."),
+            @ApiResponse(code = 404, message = "해당 포스트가 없습니다."),
+            @ApiResponse(code = 404, message = "해당 알람이 없습니다."),
+            @ApiResponse(code = 404, message = "UserName을 찾을 수 없습니다.")
+    })
+    @PostMapping("/{postId}/likes2")
+    public RsData<String> pushLike(@PathVariable Integer postId, Authentication authentication) {
+        postLikeService.pushLike(postId, authentication.getName());
+        return RsData.success("좋아요를 눌렀습니다.");
+    }
+
     @ApiOperation(value = "좋아요 개수 조회")
     @ApiResponses({
             @ApiResponse(code = 200, message = "좋아요 개수"),
             @ApiResponse(code = 404, message = "해당 포스트가 없습니다."),
+            @ApiResponse(code = 404, message = "해당 알람이 없습니다.")
     })
     @GetMapping("/{postId}/likes")
     public RsData<Integer> findPostLike(@PathVariable Integer postId) {

@@ -10,12 +10,14 @@ import com.example.sns.repository.PostLikeRepository;
 import com.example.sns.repository.PostRepository;
 import com.example.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.sns.entity.AlarmType.NEW_LIKE_ON_POST;
 import static com.example.sns.exception.ErrorCode.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -29,6 +31,30 @@ public class PostLikeService {
     /**
      * 비지니스 로직 insert, find, delete
      */
+    public void pushLike(Integer postId, String userName) {
+
+        Post post = findPost(postId);
+        User user = findUser(userName);
+
+        postLikeRepository.findByPostAndUser(post, user).ifPresentOrElse( (like) -> {
+            postLikeRepository.delete(like);
+            postRepository.decreaseLikeCounts(postId);
+
+            alarmRepository.findByUserAndTargetId(user, postId).ifPresent(alarm -> {
+                alarmRepository.delete(alarm);
+            });
+
+        }, () -> {
+            postLikeRepository.save(new PostLike(post, user));
+            postRepository.increaseLikeCounts(postId);
+
+            // 내 게시물에 내 좋아요는 알람 저장 x
+            if (!post.getUser().getUserName().equals(userName)) {
+                alarmRepository.save(new Alarm(user.getId(), postId, NEW_LIKE_ON_POST, post.getUser()));
+            }
+        });
+    }
+
     public void insertLike(Integer postId, String userName) {
 
         Post post = findPost(postId);
@@ -41,7 +67,11 @@ public class PostLikeService {
 
         postLikeRepository.save(new PostLike(post, user));
         postRepository.increaseLikeCounts(postId);
-        alarmRepository.save(new Alarm(user.getId(), postId, NEW_LIKE_ON_POST, post.getUser()));
+
+        // 내 게시물에 내 좋아요는 알람 저장 x
+        if (!post.getUser().getUserName().equals(userName)) {
+            alarmRepository.save(new Alarm(user.getId(), postId, NEW_LIKE_ON_POST, post.getUser()));
+        }
     }
 
     @Transactional(readOnly = true)
@@ -59,13 +89,11 @@ public class PostLikeService {
             throw new SpringBootAppException(LIKE_NOT_FOUND, "좋아요를 한 적이 없습니다.");
         });
 
-        Alarm alarm = alarmRepository.findByUserAndTargetId(user, postId).orElseThrow(() -> {
-            throw new SpringBootAppException(ALARM_NOT_FOUND, "알람을 한 적이 없습니다.");
-        });
-
         postLikeRepository.deleteById(postLike.getId());
-        alarmRepository.deleteById(alarm.getId());
         postRepository.decreaseLikeCounts(postId);
+        alarmRepository.findByUserAndTargetId(user, postId).ifPresent(alarm -> {
+            alarmRepository.deleteById(alarm.getId());
+        });
     }
 
     /**

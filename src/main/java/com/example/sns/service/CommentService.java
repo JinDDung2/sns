@@ -1,6 +1,9 @@
 package com.example.sns.service;
 
-import com.example.sns.entity.*;
+import com.example.sns.entity.Alarm;
+import com.example.sns.entity.Comment;
+import com.example.sns.entity.Post;
+import com.example.sns.entity.User;
 import com.example.sns.entity.dto.*;
 import com.example.sns.exception.SpringBootAppException;
 import com.example.sns.repository.AlarmRepository;
@@ -13,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.sns.entity.AlarmType.*;
+import static com.example.sns.entity.AlarmType.NEW_COMMENT_ON_POST;
 import static com.example.sns.entity.Role.ADMIN;
 import static com.example.sns.exception.ErrorCode.*;
 
@@ -40,7 +43,11 @@ public class CommentService {
 
         Comment comment = commentCreateRequestDto.toEntity(user, post);
         commentRepository.save(comment);
-        alarmRepository.save(new Alarm(user.getId(), postId, NEW_COMMENT_ON_POST, post.getUser()));
+
+        // 내 게시물에 내 댓글을 알람 저장 x
+        if (!post.getUser().getUserName().equals(userName)) {
+            alarmRepository.save(new Alarm(user.getId(), postId, NEW_COMMENT_ON_POST, post.getUser()));
+        }
         return CommentCreateResponseDto.from(comment);
     }
 
@@ -81,6 +88,9 @@ public class CommentService {
         }
 
         commentRepository.deleteById(commentId);
+        alarmRepository.findByUserAndTargetId(user, postId).ifPresent(alarm -> {
+            alarmRepository.deleteById(alarm.getId());
+        });
         return CommentDeleteResponseDto.from(comment);
     }
 
