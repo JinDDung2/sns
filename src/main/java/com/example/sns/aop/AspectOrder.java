@@ -16,8 +16,11 @@ public class AspectOrder {
     public static class LogAspect {
         @Around("com.example.sns.aop.PointCuts.all()")
         public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
-            log.info("[logging] {}", joinPoint.getSignature());
-            return joinPoint.proceed();
+            long startTime = System.currentTimeMillis();
+            Object result = joinPoint.proceed();
+            long endTime = System.currentTimeMillis();
+            log.info("[logging] {} ({}ms)", result, endTime- startTime);
+            return result;
         }
     }
 }
