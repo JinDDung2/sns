@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .antMatchers(HttpMethod.GET, "/api/v1/posts/my, /api/v1/users/alarm").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/v1/posts/my, /api/v1/alarm").authenticated()
                 .antMatchers(HttpMethod.GET).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/users/join", "/api/v1/users/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
