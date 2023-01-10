@@ -80,9 +80,9 @@ public class PostService {
             throw new SpringBootAppException(INVALID_PERMISSION, "사용자가 권한이 없습니다.");
         }
 
-        postRepository.deleteById(postId);
         commentRepository.deleteAllByPost(postId);
         postLikeRepository.deleteAllByPost(postId);
+        postRepository.deleteById(postId);
         return PostDeleteResponseDto.from(post);
     }
 
