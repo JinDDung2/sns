@@ -18,8 +18,7 @@ public enum ErrorCode {
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB에러입니다."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
     DUPLICATED_LIKE(HttpStatus.CONFLICT, "이미 좋아요를 눌렀습니다."),
-    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요를 한 적이 없습니다."),
-    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "알람을 한 적이 없습니다.");
+    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요를 한 적이 없습니다.");
 
 
     private HttpStatus httpStatus;
