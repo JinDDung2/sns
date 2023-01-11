@@ -40,6 +40,7 @@ hibernate : https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hiber
 - 알람 기능을 만들 때, 결합도에 관한 문제
   - 알람 기능을 만들고 적용하려고 할 때, PostService, commentService, postLikeService, userService 모두 alarmRepository에 의존하게 된다.
   - 댓글이 작성될 때 마다 알람을 전송한다는 것 댓글에 관한 비지니스 로직으로 보기는 힘들어보이고, commentService가 가져야 하는 책임인지도 의문이 든다.
+- jpql을 공부하는 시간이 되었습니다.
 
 ### [아쉬운 점]
 - 테스트에 대한 기본지식 부족과 mock에 대한 지식 부족으로 인해 기능 테스트시간이 기능구현시간보다 적어도 3배이상 걸렸습니다.
