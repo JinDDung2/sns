@@ -19,7 +19,7 @@ hibernate : https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hiber
 ✅ 좋아요 <br>
 ✅ 마이피드 <br>
 ✅ 알림 <br>
-☑️ 화면 UI 개발 <br>
+☑️ 화면 UI 개발(차후 개발 예정) <br>
 
 ### [접근 방법 및 고민했던 부분]
 - db에 관한 설계를 고민해보았습니다.
