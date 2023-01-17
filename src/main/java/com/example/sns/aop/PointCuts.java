@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 public class PointCuts {
 
     // com.example.sns 하위 패키지
-    @Pointcut("execution(* com.example.sns..*(..)))")
+    @Pointcut("execution(* com.example.sns..*(..))")
     public void all() {}
 }
