@@ -1,7 +1,5 @@
 # MutsaSNS
 
-url: http://ec2-43-200-70-107.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/
-
 ### 참고자료
 hibernate : https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html
 
